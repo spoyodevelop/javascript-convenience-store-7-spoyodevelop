@@ -2,6 +2,7 @@ import { Console, DateTimes } from '@woowacourse/mission-utils';
 import Product from './Model/Product.js';
 import Promotion from './Model/Promotion.js';
 import { getInputWhileValid, askUserAgree } from '../View/InputView.js';
+import ShoppingItem from './Model/ShoppingItem.js';
 
 class App {
   async run() {
@@ -58,7 +59,6 @@ class App {
 
       // 빈 배열인지 확인하여 상품이 없는 경우 메시지를 출력
       if (foundProduct.length === 0) {
-        Console.print('상품이 없습니다.');
         return;
       }
 
@@ -96,12 +96,8 @@ class App {
       const promoQuantity = promoProduct?.getQuantity() ?? 0;
 
       let promoSellQuantity = Math.min(sellingQuantity, promoQuantity);
-      const remainer = promoProduct.isRemainderLeft(sellingQuantity) ?? 0;
-      let nonPromoSellQuantity = sellingQuantity - promoSellQuantity;
-      let freebie = 0;
       let askUserFreebie = false;
       const name = nonPromoProduct.getName();
-
       if (
         promoProduct &&
         promoProduct.askFreeFreebie(sellingQuantity) &&
@@ -111,10 +107,18 @@ class App {
           `현재 ${name}은(는) 1개를 무료로 더 받을 수 있습니다. 추가하시겠습니까? (Y/N)`,
         );
       }
-      let wantToBuyNonPromo = true;
       if (askUserFreebie) {
         promoSellQuantity += 1;
       }
+      let remainer = promoProduct.isRemainderLeft(promoSellQuantity) ?? 0;
+      console.log(`remainder: ${remainer}`);
+      let nonPromoSellQuantity = 0;
+      if (sellingQuantity - promoSellQuantity > 0) {
+        nonPromoSellQuantity = sellingQuantity - promoSellQuantity;
+      }
+      let freebie = 0;
+
+      let wantToBuyNonPromo = true;
 
       if (promoProduct) {
         freebie = promoProduct.getBOGO(promoSellQuantity);
@@ -128,7 +132,9 @@ class App {
       if (!wantToBuyNonPromo) {
         nonPromoSellQuantity = 0;
         promoSellQuantity -= remainer;
+        remainer = 0;
       }
+      // 유의 reminder 적용하는지 유의할것.
       if (promoProduct && promoSellQuantity > 0) {
         promoProduct.sell(promoSellQuantity);
       }
@@ -143,7 +149,11 @@ class App {
         '멤버십 할인을 받으시겠습니까? (Y/N)',
       );
       if (membershipSale) {
-        membershipSaleTotal = ((nonPromoSellQuantity * price) / 100) * 30;
+        membershipSaleTotal =
+          (((nonPromoSellQuantity + remainer) * price) / 100) * 30;
+        if (membershipSaleTotal > 8000) {
+          membershipSaleTotal = 8000;
+        }
       }
       console.log(
         `
@@ -154,17 +164,66 @@ class App {
           맴버쉽 할인가: ${membershipSaleTotal}       
           `,
       );
+      return {
+        promoSellQuantity,
+        nonPromoSellQuantity,
+        freebie,
+        price: nonPromoProduct.getPrice(),
+        membershipSaleTotal,
+      };
+    }
+    const shoppingCart = [];
+    const bills = [];
+    Console.print('안녕하세요. W편의점입니다.');
+    Console.print('현재 보유하고 있는 상품입니다.');
+    parsedProducts.forEach((product) => Console.print(product.toString()));
+    async function askUserInput() {
+      while (true) {
+        const inputString = await Console.readLineAsync(
+          '구매하실 상품명과 수량을 입력해 주세요. (예: [사이다-2],[감자칩-1])',
+        );
+
+        const parsedString = inputString.split(',');
+        const shoppingCart = [];
+
+        parsedString.forEach((items) => {
+          const slicedString = items.slice(1, -1);
+          const [name, quantity] = slicedString.split('-');
+          shoppingCart.push(new ShoppingItem(name, Number(quantity)));
+        });
+
+        const invalidItems = shoppingCart.filter((item) => {
+          const foundProduct = findProduct(parsedProducts, item.getName());
+          return !foundProduct;
+        });
+
+        if (invalidItems.length > 0) {
+          Console.print(
+            '[ERROR] 존재하지 않는 상품이 있습니다. 다시 입력해 주세요.',
+          );
+          continue;
+        }
+
+        for (const item of shoppingCart) {
+          const foundProduct = findProduct(parsedProducts, item.getName());
+          await sellProduct(foundProduct, Number(item.getQuantity()));
+        }
+
+        break;
+      }
+
+      // 쇼핑 카트 처리 로직 추가
     }
 
-    const foundProduct = findProduct(parsedProducts, '콜라');
-    const parsedNumber = await getInputWhileValid(
-      isValidProductQuantity,
-      '수를 입력해주세요.',
-      foundProduct,
-    );
-    await sellProduct(foundProduct, Number(parsedNumber));
+    await askUserInput();
 
-    parsedProducts.forEach((product) => console.log(product.toString()));
+    // const foundProduct = findProduct(parsedProducts, '콜라');
+    // const parsedNumber = await getInputWhileValid(
+    //   isValidProductQuantity,
+    //   '수를 입력해주세요.',
+    //   foundProduct,
+    // );
+    // await sellProduct(foundProduct, Number(parsedNumber));
   }
 }
 

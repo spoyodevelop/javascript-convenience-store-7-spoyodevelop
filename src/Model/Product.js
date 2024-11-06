@@ -48,6 +48,10 @@ export default class Product {
     return this.#promotion.getFreeItem(quantity);
   }
 
+  #toNumberFormatOfKor(num) {
+    return num.toLocaleString('ko-KR');
+  }
+
   toString() {
     let quantity = '재고 없음';
 
@@ -55,6 +59,6 @@ export default class Product {
       quantity = `${this.#quantity}개`;
     }
 
-    return `- ${this.#name} ${this.#price} ${quantity} ${this.#promotion.toString()}`;
+    return `- ${this.#name} ${this.#toNumberFormatOfKor(this.#price)}원 ${quantity} ${this.#promotion.toString()}`;
   }
 }
