@@ -1,3 +1,5 @@
+import { Console } from '@woowacourse/mission-utils';
+
 export default class Product {
   #name;
 
@@ -14,11 +16,37 @@ export default class Product {
     this.#promotion = promotion;
   }
 
+  sell(quantity) {
+    this.#quantity -= quantity;
+  }
+
+  getName() {
+    return this.#name;
+  }
+
+  isPromoProduct() {
+    return this.#promotion.getName() !== 'noPromo';
+  }
+
+  getPrice() {
+    return this.#price;
+  }
+
+  getQuantity() {
+    return this.#quantity;
+  }
+
+  getBOGO(quantity) {
+    return this.#promotion.getFreeItem(quantity);
+  }
+
   toString() {
     let quantity = '재고 없음';
+
     if (this.#quantity !== 0) {
       quantity = `${this.#quantity}개`;
     }
+
     return `- ${this.#name} ${this.#price} ${quantity} ${this.#promotion.toString()}`;
   }
 }

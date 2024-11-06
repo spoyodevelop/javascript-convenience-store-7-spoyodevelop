@@ -1,6 +1,7 @@
 import { Console, DateTimes } from '@woowacourse/mission-utils';
 import Product from './Model/Product.js';
 import Promotion from './Model/Promotion.js';
+import getInputWhileValid from '../View/InputView.js';
 
 class App {
   async run() {
@@ -32,24 +33,99 @@ class App {
 
     const allProduct = new Set(products.map((product) => product[0]));
     const needToAddProduct = [...allProduct.difference(promoProducts)];
-    console.log(needToAddProduct);
 
     const parsedProducts = [];
     products.forEach((product) => {
-      parsedProducts.push(
-        new Product(
-          product[0],
-          product[1],
-          product[2],
-          new Promotion(product[3]),
-        ),
-      );
+      const [name, price, quantity, promo] = product;
+      let promotion;
+      if (promo) {
+        promotion = new Promotion(promo);
+      } else {
+        promotion = new Promotion('noPromo');
+      }
+      parsedProducts.push(new Product(name, price, quantity, promotion));
       const isNeedToAdd = needToAddProduct.includes(product[0]);
       if (isNeedToAdd) {
-        parsedProducts.push(new Product(product[0], product[1], 0, null));
+        parsedProducts.push(
+          new Product(name, price, 0, new Promotion('noPromo')),
+        );
       }
     });
+    function findProduct(findingProducts, productName) {
+      const foundProduct = findingProducts.filter(
+        (product) => product.getName() === productName,
+      );
 
+      // 빈 배열인지 확인하여 상품이 없는 경우 메시지를 출력
+      if (foundProduct.length === 0) {
+        Console.print('상품이 없습니다.');
+        return;
+      }
+
+      return foundProduct;
+    }
+
+    function isValidProductQuantity(inputQuantity, foundProduct) {
+      const [promoProduct] = foundProduct.filter((product) =>
+        product.isPromoProduct(),
+      );
+      const [nonPromoProduct] = foundProduct.filter(
+        (product) => !product.isPromoProduct(),
+      );
+
+      const promoQuantity = promoProduct?.getQuantity() ?? 0;
+      const nonPromoQuantity = nonPromoProduct?.getQuantity() ?? 0;
+
+      if (Number(inputQuantity) > promoQuantity + nonPromoQuantity) {
+        Console.print(
+          `[ERROR] 재고 수량을 초과하여 구매할 수 없습니다. 다시 입력해 주세요.`,
+        );
+        return false;
+      }
+      return Number(inputQuantity);
+    }
+
+    function sellProduct(foundProduct, sellingQuantity) {
+      const [promoProduct] = foundProduct.filter((product) =>
+        product.isPromoProduct(),
+      );
+      const [nonPromoProduct] = foundProduct.filter(
+        (product) => !product.isPromoProduct(),
+      );
+      const promoQuantity = promoProduct?.getQuantity() ?? 0;
+      const nonPromoQuantity = nonPromoProduct?.getQuantity() ?? 0;
+
+      const promoSellQuantity = Math.min(sellingQuantity, promoQuantity);
+
+      const nonPromoSellQuantity = sellingQuantity - promoSellQuantity;
+      let freebie = 0;
+      if (promoProduct) {
+        freebie = promoProduct.getBOGO(promoSellQuantity);
+      }
+      if (promoProduct && promoSellQuantity > 0) {
+        promoProduct.sell(promoSellQuantity);
+      }
+
+      if (nonPromoProduct && nonPromoSellQuantity > 0) {
+        nonPromoProduct.sell(nonPromoSellQuantity);
+      }
+      console.log(
+        `
+          promo에서 파는 양 : ${promoSellQuantity}
+          nonPromo에서 파는 양: ${nonPromoSellQuantity}
+          꽁짜로 주는 양: ${freebie}
+          가격: ${nonPromoProduct.getPrice()}          
+          `,
+      );
+    }
+
+    const foundProduct = findProduct(parsedProducts, '오렌지주스');
+    const parsedNumber = await getInputWhileValid(
+      isValidProductQuantity,
+      '수를 입력해주세요.',
+      foundProduct,
+    );
+    sellProduct(foundProduct, parsedNumber);
     parsedProducts.forEach((product) => console.log(product.toString()));
   }
 }

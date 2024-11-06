@@ -16,13 +16,14 @@ export default class Promotion {
   #end_date;
 
   constructor(name) {
-    if (name === null) {
+    if (name === 'noPromo') {
       this.#name = 'noPromo';
       this.#buy = 0;
       this.#get = 0;
-      this.#end_date = null;
-      this.#start_date = null;
+      this.#start_date = 0;
+      this.#end_date = 0;
     }
+
     const filteredPromotion = promotions.filter(
       (promotion) => promotion[0] === name,
     );
@@ -40,8 +41,18 @@ export default class Promotion {
     }
   }
 
+  #checkDate() {}
+
+  getFreeItem(purchaseCount) {
+    const rate = Math.floor(purchaseCount / (this.#buy + 1));
+    return rate * this.#get;
+  }
+
+  getName() {
+    return this.#name;
+  }
+
   toString() {
-    if (this.#name) return this.#name;
-    return '';
+    return this.getName() === 'noPromo' ? '' : this.#name;
   }
 }
