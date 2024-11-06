@@ -122,9 +122,10 @@ class App {
       }
 
       if (
-        (promoProduct && nonPromoSellQuantity) ||
+        promoProduct &&
+        nonPromoSellQuantity
         // 말이안됨
-        (remainer && remainer > 1)
+        // || remainer
       ) {
         wantToBuyNonPromo = await askUserAgree(
           `현재 ${name}은(는) ${nonPromoSellQuantity + remainer}개는 프로모션 할인이 적용되지 않습니다. 그래도 구매하시겠습니까? (Y/N)`,
@@ -171,7 +172,49 @@ class App {
         membershipSaleTotal,
       };
     }
+    async function sellExpiredProduct(foundProduct, sellingQuantity) {
+      const [promoProduct] = foundProduct.filter((product) =>
+        product.isPromoProduct(),
+      );
+      const [nonPromoProduct] = foundProduct.filter(
+        (product) => !product.isPromoProduct(),
+      );
 
+      const promoQuantity = promoProduct?.getQuantity() ?? 0;
+
+      const promoSellQuantity = Math.min(sellingQuantity, promoQuantity);
+
+      const name = nonPromoProduct.getName();
+
+      // console.log(`remainder: ${remainer}`);
+      const nonPromoSellQuantity = sellingQuantity - promoSellQuantity;
+
+      if (promoProduct && promoSellQuantity > 0) {
+        promoProduct.sell(promoSellQuantity);
+      }
+
+      if (nonPromoProduct && nonPromoSellQuantity > 0) {
+        nonPromoProduct.sell(nonPromoSellQuantity);
+      }
+      let membershipSaleTotal = 0;
+      const price = nonPromoProduct.getPrice();
+
+      membershipSaleTotal =
+        (((nonPromoSellQuantity + promoSellQuantity) * price) / 100) * 30;
+      if (membershipSaleTotal > 8000) {
+        membershipSaleTotal = 8000;
+      }
+
+      return {
+        name,
+        promoSellQuantity,
+        nonPromoSellQuantity,
+        totalQuantity: promoSellQuantity + nonPromoSellQuantity,
+
+        price: nonPromoProduct.getPrice(),
+        membershipSaleTotal,
+      };
+    }
     async function askUserInput() {
       while (true) {
         const inputString = await Console.readLineAsync(
