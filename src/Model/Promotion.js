@@ -43,6 +43,14 @@ export default class Promotion {
 
   #checkDate() {}
 
+  isAbleToGiveFreebie(purchaseCount) {
+    return purchaseCount % (this.#buy + 1) === this.#buy;
+  }
+
+  isRemainderLeft(purchaseCount) {
+    return purchaseCount % (this.#buy + 1);
+  }
+
   getFreeItem(purchaseCount) {
     const rate = Math.floor(purchaseCount / (this.#buy + 1));
     return rate * this.#get;

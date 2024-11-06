@@ -28,6 +28,14 @@ export default class Product {
     return this.#promotion.getName() !== 'noPromo';
   }
 
+  askFreeFreebie(quantity) {
+    return this.#promotion.isAbleToGiveFreebie(quantity);
+  }
+
+  isRemainderLeft(purchaseCount) {
+    return this.#promotion.isRemainderLeft(purchaseCount);
+  }
+
   getPrice() {
     return this.#price;
   }

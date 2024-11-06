@@ -1,7 +1,7 @@
 import { Console, DateTimes } from '@woowacourse/mission-utils';
 import Product from './Model/Product.js';
 import Promotion from './Model/Promotion.js';
-import getInputWhileValid from '../View/InputView.js';
+import { getInputWhileValid, askUserAgree } from '../View/InputView.js';
 
 class App {
   async run() {
@@ -85,22 +85,49 @@ class App {
       return Number(inputQuantity);
     }
 
-    function sellProduct(foundProduct, sellingQuantity) {
+    async function sellProduct(foundProduct, sellingQuantity) {
       const [promoProduct] = foundProduct.filter((product) =>
         product.isPromoProduct(),
       );
       const [nonPromoProduct] = foundProduct.filter(
         (product) => !product.isPromoProduct(),
       );
+
       const promoQuantity = promoProduct?.getQuantity() ?? 0;
-      const nonPromoQuantity = nonPromoProduct?.getQuantity() ?? 0;
 
-      const promoSellQuantity = Math.min(sellingQuantity, promoQuantity);
-
-      const nonPromoSellQuantity = sellingQuantity - promoSellQuantity;
+      let promoSellQuantity = Math.min(sellingQuantity, promoQuantity);
+      const remainer = promoProduct.isRemainderLeft(sellingQuantity) ?? 0;
+      let nonPromoSellQuantity = sellingQuantity - promoSellQuantity;
       let freebie = 0;
+      let askUserFreebie = false;
+      const name = nonPromoProduct.getName();
+
+      if (
+        promoProduct &&
+        promoProduct.askFreeFreebie(sellingQuantity) &&
+        sellingQuantity < promoQuantity
+      ) {
+        askUserFreebie = await askUserAgree(
+          `현재 ${name}은(는) 1개를 무료로 더 받을 수 있습니다. 추가하시겠습니까? (Y/N)`,
+        );
+      }
+      let wantToBuyNonPromo = true;
+      if (askUserFreebie) {
+        promoSellQuantity += 1;
+      }
+
       if (promoProduct) {
         freebie = promoProduct.getBOGO(promoSellQuantity);
+      }
+
+      if ((promoProduct && nonPromoSellQuantity) || remainer) {
+        wantToBuyNonPromo = await askUserAgree(
+          `현재 ${name}은(는) ${nonPromoSellQuantity + remainer}개는 프로모션 할인이 적용되지 않습니다. 그래도 구매하시겠습니까? (Y/N)`,
+        );
+      }
+      if (!wantToBuyNonPromo) {
+        nonPromoSellQuantity = 0;
+        promoSellQuantity -= remainer;
       }
       if (promoProduct && promoSellQuantity > 0) {
         promoProduct.sell(promoSellQuantity);
@@ -109,23 +136,34 @@ class App {
       if (nonPromoProduct && nonPromoSellQuantity > 0) {
         nonPromoProduct.sell(nonPromoSellQuantity);
       }
+      let membershipSaleTotal = 0;
+      const price = nonPromoProduct.getPrice();
+
+      const membershipSale = await askUserAgree(
+        '멤버십 할인을 받으시겠습니까? (Y/N)',
+      );
+      if (membershipSale) {
+        membershipSaleTotal = ((nonPromoSellQuantity * price) / 100) * 30;
+      }
       console.log(
         `
           promo에서 파는 양 : ${promoSellQuantity}
           nonPromo에서 파는 양: ${nonPromoSellQuantity}
           꽁짜로 주는 양: ${freebie}
-          가격: ${nonPromoProduct.getPrice()}          
+          가격: ${nonPromoProduct.getPrice()}   
+          맴버쉽 할인가: ${membershipSaleTotal}       
           `,
       );
     }
 
-    const foundProduct = findProduct(parsedProducts, '오렌지주스');
+    const foundProduct = findProduct(parsedProducts, '콜라');
     const parsedNumber = await getInputWhileValid(
       isValidProductQuantity,
       '수를 입력해주세요.',
       foundProduct,
     );
-    sellProduct(foundProduct, parsedNumber);
+    await sellProduct(foundProduct, Number(parsedNumber));
+
     parsedProducts.forEach((product) => console.log(product.toString()));
   }
 }

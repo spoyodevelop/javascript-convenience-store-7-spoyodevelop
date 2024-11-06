@@ -17,11 +17,7 @@ import { Console } from '@woowacourse/mission-utils';
  * const isNumber = (input) => !isNaN(input);
  * const userNumber = await getInputWhileValid(isNumber, "숫자를 입력하세요:");
  */
-export default async function getInputWhileValid(
-  validator,
-  promptMessage,
-  ...args
-) {
+export async function getInputWhileValid(validator, promptMessage, ...args) {
   const input = await Console.readLineAsync(promptMessage);
   const validInput = validator(input, ...args);
 
@@ -29,4 +25,16 @@ export default async function getInputWhileValid(
     return validInput;
   }
   return getInputWhileValid(validator, promptMessage, ...args);
+}
+export async function askUserAgree(promptMessage) {
+  const input = await Console.readLineAsync(promptMessage);
+
+  if (input === 'Y') {
+    return true;
+  }
+  if (input === 'N') {
+    return false;
+  }
+  Console.print('Y/N이외에 입력은 할수 없습니다.');
+  return askUserAgree(promptMessage);
 }
