@@ -32,8 +32,11 @@ class App {
         .map((product) => product[0]),
     );
 
-    const allProduct = new Set(products.map((product) => product[0]));
-    const needToAddProduct = [...allProduct.difference(promoProducts)];
+    const allProduct = products.map((product) => product[0]);
+
+    const needToAddProduct = allProduct.filter(
+      (product) => !promoProducts.has(product),
+    );
 
     const parsedProducts = [];
     products.forEach((product) => {
@@ -253,8 +256,16 @@ class App {
         }
         for (const item of shoppingCart) {
           const foundProduct = findProduct(parsedProducts, item.getName());
+          const [promoProduct] = foundProduct.filter((product) =>
+            product.isPromoProduct(),
+          );
+          let bill;
 
-          const bill = await sellProduct(foundProduct, item.getQuantity());
+          if (promoProduct && !promoProduct.isExpired(DateTimes.now())) {
+            bill = await sellExpiredProduct(foundProduct, item.getQuantity());
+          } else {
+            bill = await sellProduct(foundProduct, item.getQuantity());
+          }
           bills.push(bill);
         }
         const isMembershipSale = await askUserAgree(
@@ -274,8 +285,11 @@ class App {
       let totalMembershipSale = 0;
       bills.forEach((bill) => {
         goods.push([bill.name, bill.totalQuantity, bill.price, bill.freebie]);
+
         totalPurchased += bill.totalQuantity * bill.price;
-        totalPromoSale += bill.freebie * bill.price;
+        if (bill.freebie) {
+          totalPromoSale += bill.freebie * bill.price;
+        }
         if (isMembershipSale) totalMembershipSale += bill.membershipSaleTotal;
       });
       const sumsTotal = totalPurchased - totalMembershipSale - totalPromoSale;

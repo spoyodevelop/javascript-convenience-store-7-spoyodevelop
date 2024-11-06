@@ -52,8 +52,6 @@ export default class Product {
     return this.#promotion.getFreeItem(quantity);
   }
 
-  getFree;
-
   #toNumberFormatOfKor(num) {
     return num.toLocaleString('ko-KR');
   }

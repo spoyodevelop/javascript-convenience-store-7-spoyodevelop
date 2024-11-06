@@ -58,10 +58,7 @@ export default class Promotion {
   }
 
   getPromotionDate(date) {
-    return (
-      this.#start_date.getTime() < date.getTime() &&
-      this.#end_date.getTime() > date.getTime()
-    );
+    return this.#start_date < date && this.#end_date > date;
   }
 
   getName() {
