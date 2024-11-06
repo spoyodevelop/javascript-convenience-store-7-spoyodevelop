@@ -57,6 +57,13 @@ export default class Promotion {
     return rate * this.#get;
   }
 
+  getPromotionDate(date) {
+    return (
+      this.#start_date.getTime() < date.getTime() &&
+      this.#end_date.getTime() > date.getTime()
+    );
+  }
+
   getName() {
     return this.#name;
   }

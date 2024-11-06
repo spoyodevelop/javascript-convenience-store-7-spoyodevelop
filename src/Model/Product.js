@@ -36,6 +36,10 @@ export default class Product {
     return this.#promotion.isRemainderLeft(purchaseCount);
   }
 
+  isExpired(date) {
+    return this.#promotion.getPromotionDate(date);
+  }
+
   getPrice() {
     return this.#price;
   }
@@ -47,6 +51,8 @@ export default class Product {
   getBOGO(quantity) {
     return this.#promotion.getFreeItem(quantity);
   }
+
+  getFree;
 
   #toNumberFormatOfKor(num) {
     return num.toLocaleString('ko-KR');
