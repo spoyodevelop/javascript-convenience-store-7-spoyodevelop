@@ -153,7 +153,7 @@ describe('편의점', () => {
       expectedIgnoringWhiteSpaces: ['내실돈3,500'],
     });
   });
-  test('콜라 수가 부족해서 결제를 안했을때, ', async () => {
+  test('콜라 수가 부족해서 결제를 안했을때, 정확히 프롬프트가 뜨는지 확인', async () => {
     await run({
       inputs: [
         '[콜라-10]',
