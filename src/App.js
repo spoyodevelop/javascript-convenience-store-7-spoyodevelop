@@ -84,14 +84,18 @@ class App {
       }
       return Number(inputQuantity);
     }
-
-    async function sellProduct(foundProduct, sellingQuantity) {
+    function getPromoAndNonPromoProducts(foundProduct) {
       const [promoProduct] = foundProduct.filter((product) =>
         product.isPromoProduct(),
       );
       const [nonPromoProduct] = foundProduct.filter(
         (product) => !product.isPromoProduct(),
       );
+      return { promoProduct, nonPromoProduct };
+    }
+    async function sellProduct(foundProduct, sellingQuantity) {
+      const { promoProduct, nonPromoProduct } =
+        getPromoAndNonPromoProducts(foundProduct);
 
       const promoQuantity = promoProduct?.getQuantity() ?? 0;
 
