@@ -32,6 +32,10 @@ export default class Product {
     return this.#promotion.isAbleToGiveFreebie(quantity);
   }
 
+  howMuchItemNeedToBeFree() {
+    return this.#promotion.getFreeItemNeed();
+  }
+
   isRemainderLeft(purchaseCount) {
     return this.#promotion.isRemainderLeft(purchaseCount);
   }

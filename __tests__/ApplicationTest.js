@@ -153,6 +153,23 @@ describe('편의점', () => {
       expectedIgnoringWhiteSpaces: ['내실돈3,500'],
     });
   });
+  test('콜라 수가 부족해서 결제를 안했을때, ', async () => {
+    await run({
+      inputs: [
+        '[콜라-10]',
+        'Y',
+        'Y',
+        '[콜라-10]',
+        'N',
+        'Y',
+        '[콜라-10]',
+        'Y',
+        'Y',
+        'N',
+      ],
+      expectedIgnoringWhiteSpaces: ['내실돈7,000'],
+    });
+  });
   test('행사 제품이 하나 부족할때, 하나 더 주는것을 거부했을때, 정상적으로 맴버쉽 할인이 적용되는지 확인', async () => {
     await run({
       inputs: ['[사이다-2],[감자칩-1]', 'N', 'N', 'Y', 'N'],

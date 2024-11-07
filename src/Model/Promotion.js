@@ -41,7 +41,9 @@ export default class Promotion {
     }
   }
 
-  #checkDate() {}
+  getFreeItemNeed() {
+    return this.#get;
+  }
 
   isAbleToGiveFreebie(purchaseCount) {
     return purchaseCount % (this.#buy + 1) === this.#buy;

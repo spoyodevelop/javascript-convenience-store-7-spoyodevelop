@@ -25,9 +25,37 @@ export default async function askUserInput(parsedProducts) {
   }
 
   const bills = await processShoppingCart(shoppingCart, parsedProducts);
+
+  const goods = [];
+  let totalPurchased = 0;
+  let totalPromoSale = 0;
+  let totalMembershipSale = 0;
+  //   console.log(bills);
+
+  bills.forEach((bill) => {
+    goods.push([bill.name, bill.totalQuantity, bill.price, bill.freebie]);
+
+    totalPurchased += bill.totalQuantity * bill.price;
+    if (bill.freebie) {
+      totalPromoSale += bill.freebie * bill.price;
+    }
+    totalMembershipSale += bill.membershipSaleTotal;
+  });
+  const filteredGoods = goods.filter((good) => good[1] !== 0);
+
+  if (!filteredGoods || filteredGoods.length === 0) {
+    return;
+  }
   const isMembershipSale = await askUserAgree(
     '멤버십 할인을 받으시겠습니까? (Y/N)',
   );
 
-  return { bills, isMembershipSale };
+  return {
+    bills,
+    isMembershipSale,
+    filteredGoods,
+    totalPurchased,
+    totalPromoSale,
+    totalMembershipSale,
+  };
 }
