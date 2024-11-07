@@ -1,8 +1,10 @@
 import { Console, DateTimes } from '@woowacourse/mission-utils';
 import Product from './Model/Product.js';
 import Promotion from './Model/Promotion.js';
-import { getInputWhileValid, askUserAgree } from '../View/InputView.js';
+import { askUserAgree } from '../View/InputView.js';
 import ShoppingItem from './Model/ShoppingItem.js';
+import sellProduct from './Seller/sellProduct.js';
+import sellExpiredProduct from './Seller/sellExpiredProduct.js';
 
 class App {
   async run() {
@@ -84,135 +86,8 @@ class App {
       }
       return Number(inputQuantity);
     }
-    function getPromoAndNonPromoProducts(foundProduct) {
-      const [promoProduct] = foundProduct.filter((product) =>
-        product.isPromoProduct(),
-      );
-      const [nonPromoProduct] = foundProduct.filter(
-        (product) => !product.isPromoProduct(),
-      );
-      return { promoProduct, nonPromoProduct };
-    }
-    async function sellProduct(foundProduct, sellingQuantity) {
-      const { promoProduct, nonPromoProduct } =
-        getPromoAndNonPromoProducts(foundProduct);
+    // 프로모션 상품과 비프로모션 상품 분리
 
-      const promoQuantity = promoProduct?.getQuantity() ?? 0;
-
-      let promoSellQuantity = Math.min(sellingQuantity, promoQuantity);
-      let askUserFreebie = false;
-      const name = nonPromoProduct.getName();
-      if (
-        promoProduct &&
-        promoProduct.askFreeFreebie(sellingQuantity) &&
-        sellingQuantity < promoQuantity
-      ) {
-        askUserFreebie = await askUserAgree(
-          `현재 ${name}은(는) 1개를 무료로 더 받을 수 있습니다. 추가하시겠습니까? (Y/N)`,
-        );
-      }
-      if (askUserFreebie) {
-        promoSellQuantity += 1;
-      }
-      let remainer = promoProduct?.isRemainderLeft(promoSellQuantity) ?? 0;
-
-      let nonPromoSellQuantity = 0;
-      if (sellingQuantity - promoSellQuantity > 0) {
-        nonPromoSellQuantity = sellingQuantity - promoSellQuantity;
-      }
-      let freebie = 0;
-
-      let wantToBuyNonPromo = true;
-
-      if (promoProduct) {
-        freebie = promoProduct.getBOGO(promoSellQuantity);
-      }
-
-      if (
-        promoProduct &&
-        nonPromoSellQuantity
-        // 말이안됨
-        // || remainer
-      ) {
-        wantToBuyNonPromo = await askUserAgree(
-          `현재 ${name}은(는) ${nonPromoSellQuantity + remainer}개는 프로모션 할인이 적용되지 않습니다. 그래도 구매하시겠습니까? (Y/N)`,
-        );
-      }
-      if (!wantToBuyNonPromo) {
-        nonPromoSellQuantity = 0;
-        promoSellQuantity -= remainer;
-        remainer = 0;
-      }
-      // 유의 reminder 적용하는지 유의할것.
-      if (promoProduct && promoSellQuantity > 0) {
-        promoProduct.sell(promoSellQuantity);
-      }
-
-      if (nonPromoProduct && nonPromoSellQuantity > 0) {
-        nonPromoProduct.sell(nonPromoSellQuantity);
-      }
-      let membershipSaleTotal = 0;
-      const price = nonPromoProduct.getPrice();
-
-      membershipSaleTotal =
-        (((nonPromoSellQuantity + remainer) * price) / 100) * 30;
-      if (membershipSaleTotal > 8000) {
-        membershipSaleTotal = 8000;
-      }
-
-      return {
-        name,
-        promoSellQuantity,
-        nonPromoSellQuantity,
-        totalQuantity: promoSellQuantity + nonPromoSellQuantity,
-        freebie,
-        price: nonPromoProduct.getPrice(),
-        membershipSaleTotal,
-      };
-    }
-    async function sellExpiredProduct(foundProduct, sellingQuantity) {
-      const [promoProduct] = foundProduct.filter((product) =>
-        product.isPromoProduct(),
-      );
-      const [nonPromoProduct] = foundProduct.filter(
-        (product) => !product.isPromoProduct(),
-      );
-
-      const promoQuantity = promoProduct?.getQuantity() ?? 0;
-
-      const promoSellQuantity = Math.min(sellingQuantity, promoQuantity);
-
-      const name = nonPromoProduct.getName();
-
-      // console.log(`remainder: ${remainer}`);
-      const nonPromoSellQuantity = sellingQuantity - promoSellQuantity;
-
-      if (promoProduct && promoSellQuantity > 0) {
-        promoProduct.sell(promoSellQuantity);
-      }
-
-      if (nonPromoProduct && nonPromoSellQuantity > 0) {
-        nonPromoProduct.sell(nonPromoSellQuantity);
-      }
-      let membershipSaleTotal = 0;
-      const price = nonPromoProduct.getPrice();
-
-      membershipSaleTotal =
-        (((nonPromoSellQuantity + promoSellQuantity) * price) / 100) * 30;
-      if (membershipSaleTotal > 8000) {
-        membershipSaleTotal = 8000;
-      }
-
-      return {
-        name,
-        promoSellQuantity,
-        nonPromoSellQuantity,
-        totalQuantity: promoSellQuantity + nonPromoSellQuantity,
-
-        price: nonPromoProduct.getPrice(),
-        membershipSaleTotal,
-      };
-    }
     async function askUserInput() {
       while (true) {
         const inputString = await Console.readLineAsync(
@@ -287,10 +162,15 @@ class App {
         }
         if (isMembershipSale) totalMembershipSale += bill.membershipSaleTotal;
       });
-      const sumsTotal = totalPurchased - totalMembershipSale - totalPromoSale;
+
       function toNumberFormatOfKor(num) {
         return num.toLocaleString('ko-KR');
       }
+
+      totalMembershipSale = Math.min(8000, totalMembershipSale);
+
+      const sumsTotal = totalPurchased - totalMembershipSale - totalPromoSale;
+
       Console.print('===========W 편의점=============');
       Console.print('상품명		수량	금액');
 
