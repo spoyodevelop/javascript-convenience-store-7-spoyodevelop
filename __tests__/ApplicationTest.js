@@ -140,10 +140,30 @@ describe('편의점', () => {
       expectedIgnoringWhiteSpaces: ['내실돈53,200'],
     });
   });
-  test('정식 구매시, 얼마 정도 돈이 드는지 확인', async () => {
+  test('정식도시락 구매시, 얼마 정도 돈이 드는지 확인', async () => {
     await run({
       inputs: ['[정식도시락-8],[에너지바-5]', 'N', 'N'],
       expectedIgnoringWhiteSpaces: ['내실돈61,200'],
+    });
+  });
+
+  test('행사 제품이 하나 부족할때, 하나 더 주는것이 정상적으로 동작하는지 확인', async () => {
+    await run({
+      inputs: ['[사이다-2],[감자칩-1]', 'Y', 'Y', 'Y', 'N'],
+      expectedIgnoringWhiteSpaces: ['내실돈3,500'],
+    });
+  });
+  test('행사 제품이 하나 부족할때, 하나 더 주는것을 거부했을때, 정상적으로 맴버쉽 할인이 적용되는지 확인', async () => {
+    await run({
+      inputs: ['[사이다-2],[감자칩-1]', 'N', 'N', 'Y', 'N'],
+      expectedIgnoringWhiteSpaces: ['내실돈2,450'],
+    });
+  });
+  // 다만 이경우에는, 1개를 구매할때 프로모션 미적용을 확인할수 있을까?
+  test('콜라 10개를 계산할때, 프로모션 미 적용을 확인하는지 확인', async () => {
+    await run({
+      inputs: ['[콜라-10]', 'Y', 'N'],
+      expectedIgnoringWhiteSpaces: ['내실돈6,700'],
     });
   });
   test('기간에 해당하지 않는 프로모션 적용', async () => {
