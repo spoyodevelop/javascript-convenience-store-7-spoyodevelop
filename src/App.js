@@ -111,7 +111,7 @@ class App {
         promoSellQuantity += 1;
       }
       let remainer = promoProduct?.isRemainderLeft(promoSellQuantity) ?? 0;
-      // console.log(`remainder: ${remainer}`);
+
       let nonPromoSellQuantity = 0;
       if (sellingQuantity - promoSellQuantity > 0) {
         nonPromoSellQuantity = sellingQuantity - promoSellQuantity;
@@ -156,15 +156,6 @@ class App {
         membershipSaleTotal = 8000;
       }
 
-      // console.log(
-      //   `
-      //     promo에서 파는 양 : ${promoSellQuantity}
-      //     nonPromo에서 파는 양: ${nonPromoSellQuantity}
-      //     꽁짜로 주는 양: ${freebie}
-      //     가격: ${nonPromoProduct.getPrice()}
-      //     맴버쉽 할인가: ${membershipSaleTotal}
-      //     `,
-      // );
       return {
         name,
         promoSellQuantity,

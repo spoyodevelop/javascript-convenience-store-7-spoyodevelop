@@ -48,7 +48,6 @@ export default class Promotion {
   }
 
   isRemainderLeft(purchaseCount) {
-    console.log(purchaseCount % (this.#buy + 1));
     return purchaseCount % (this.#buy + 1);
   }
 
