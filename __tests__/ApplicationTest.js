@@ -154,7 +154,7 @@ describe('편의점', () => {
       expectedIgnoringWhiteSpaces: ['내실돈3,000'],
     });
   });
-  test('기간에 해당하지 않는 프로모션 적용', async () => {
+  test('기간에 해당하지 않는 프로모션 적용 및 맴버쉽 혜택 적용', async () => {
     mockNowDate('2024-02-01');
 
     await run({
@@ -162,7 +162,14 @@ describe('편의점', () => {
       expectedIgnoringWhiteSpaces: ['내실돈2,100'],
     });
   });
+  test('기간에 해당하지 않는 프로모션 적용 및 맴버쉽 혜택 적용 및 맴버쉽 할인 천장 테스트', async () => {
+    mockNowDate('2024-02-01');
 
+    await run({
+      inputs: ['[감자칩-2],[정식도시락-8]', 'Y', 'N'],
+      expectedIgnoringWhiteSpaces: ['내실돈46,200'],
+    });
+  });
   test('예외 테스트', async () => {
     await runExceptions({
       inputs: ['[컵라면-12]', 'N', 'N'],
