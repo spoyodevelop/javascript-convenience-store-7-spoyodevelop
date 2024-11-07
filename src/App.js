@@ -1,45 +1,15 @@
 import { Console, DateTimes } from '@woowacourse/mission-utils';
-import Product from './Model/Product.js';
-import Promotion from './Model/Promotion.js';
+
 import { askUserAgree } from '../View/InputView.js';
 import ShoppingItem from './Model/ShoppingItem.js';
 import sellProduct from './Seller/sellProduct.js';
 import sellExpiredProduct from './Seller/sellExpiredProduct.js';
 import PRODUCT_LIST from './Model/ProductList.js';
+import parseProducts from './ProductMaker/parseProducts.js';
 
 class App {
   async run() {
-    const parsedProducts = [];
-
-    // products를 검사하여, 프로모션이 있지만, 일반 재고가 없는 것들은 반영 시킨다.
-    const promoProducts = new Set(
-      PRODUCT_LIST.filter((product) => product[3] === null).map(
-        (product) => product[0],
-      ),
-    );
-
-    const allProduct = PRODUCT_LIST.map((product) => product[0]);
-
-    const needToAddProduct = allProduct.filter(
-      (product) => !promoProducts.has(product),
-    );
-
-    PRODUCT_LIST.forEach((product) => {
-      const [name, price, quantity, promo] = product;
-      let promotion;
-      if (promo) {
-        promotion = new Promotion(promo);
-      } else {
-        promotion = new Promotion('noPromo');
-      }
-      parsedProducts.push(new Product(name, price, quantity, promotion));
-      const isNeedToAdd = needToAddProduct.includes(product[0]);
-      if (isNeedToAdd) {
-        parsedProducts.push(
-          new Product(name, price, 0, new Promotion('noPromo')),
-        );
-      }
-    });
+    const parsedProducts = parseProducts(PRODUCT_LIST);
     function findProduct(findingProducts, productName) {
       const foundProduct = findingProducts.filter(
         (product) => product.getName() === productName,
