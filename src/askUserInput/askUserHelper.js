@@ -1,6 +1,8 @@
-import { Console } from '@woowacourse/mission-utils';
+import { Console, DateTimes } from '@woowacourse/mission-utils';
 import ShoppingItem from '../Model/ShoppingItem.js';
 import findProduct from '../ProductFinder/findProduct.js';
+import sellProduct from '../Seller/sellProduct.js';
+import sellExpiredProduct from '../Seller/sellExpiredProduct.js';
 
 async function promptUserInput() {
   return Console.readLineAsync(

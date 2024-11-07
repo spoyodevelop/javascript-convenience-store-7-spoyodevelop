@@ -1,120 +1,14 @@
-import { Console, DateTimes } from '@woowacourse/mission-utils';
+import { Console } from '@woowacourse/mission-utils';
 
 import { askUserAgree } from '../View/InputView.js';
-import ShoppingItem from './Model/ShoppingItem.js';
-import sellProduct from './Seller/sellProduct.js';
-import sellExpiredProduct from './Seller/sellExpiredProduct.js';
+
 import PRODUCT_LIST from './Model/ProductList.js';
 import parseProducts from './ProductMaker/parseProducts.js';
+import askUserInput from './askUserInput/askUserInput.js';
 
 class App {
   async run() {
     const parsedProducts = parseProducts(PRODUCT_LIST);
-    function findProduct(findingProducts, productName) {
-      const foundProduct = findingProducts.filter(
-        (product) => product.getName() === productName,
-      );
-
-      // 빈 배열인지 확인하여 상품이 없는 경우 메시지를 출력
-      if (foundProduct.length === 0) {
-        return;
-      }
-
-      return foundProduct;
-    }
-    // 사용자 입력을 받는 함수
-    async function promptUserInput() {
-      return await Console.readLineAsync(
-        '구매하실 상품명과 수량을 입력해 주세요. (예: [사이다-2],[감자칩-1])',
-      );
-    }
-
-    // 입력 문자열을 장바구니 객체로 변환
-    function parseShoppingCart(inputString) {
-      const parsedString = inputString.split(',');
-      return parsedString.map((items) => {
-        const slicedString = items.slice(1, -1);
-        const [name, quantity] = slicedString.split('-');
-        return new ShoppingItem(name, Number(quantity));
-      });
-    }
-
-    // 상품이 존재하는지 확인
-    function validateItemsExist(shoppingCart, parsedProducts) {
-      const invalidItems = shoppingCart.filter((item) => {
-        const foundProduct = findProduct(parsedProducts, item.getName());
-        return !foundProduct;
-      });
-      return invalidItems.length === 0;
-    }
-
-    // 재고 수량 검증
-    function validateStockQuantity(shoppingCart, parsedProducts) {
-      return shoppingCart.every((item) => {
-        const foundProduct = findProduct(parsedProducts, item.getName());
-        if (!foundProduct) return false; // 상품이 없으면 유효하지 않음
-
-        const [promoProduct] = foundProduct.filter((product) =>
-          product.isPromoProduct(),
-        );
-        const [nonPromoProduct] = foundProduct.filter(
-          (product) => !product.isPromoProduct(),
-        );
-
-        const promoQuantity = promoProduct?.getQuantity() ?? 0;
-        const nonPromoQuantity = nonPromoProduct?.getQuantity() ?? 0;
-
-        // 총 재고와 입력 수량 비교
-        return item.getQuantity() <= promoQuantity + nonPromoQuantity;
-      });
-    }
-
-    // 장바구니 처리 및 결제
-    async function processShoppingCart(shoppingCart, parsedProducts) {
-      const bills = [];
-      for (const item of shoppingCart) {
-        const foundProduct = findProduct(parsedProducts, item.getName());
-        const [promoProduct] = foundProduct.filter((product) =>
-          product.isPromoProduct(),
-        );
-        let bill;
-
-        if (promoProduct && !promoProduct.isExpired(DateTimes.now())) {
-          bill = await sellExpiredProduct(foundProduct, item.getQuantity());
-        } else {
-          bill = await sellProduct(foundProduct, item.getQuantity());
-        }
-        bills.push(bill);
-      }
-      return bills;
-    }
-
-    // 사용자 입력을 처리하는 메인 함수
-    async function askUserInput(parsedProducts) {
-      const inputString = await promptUserInput();
-      const shoppingCart = parseShoppingCart(inputString);
-
-      if (!validateItemsExist(shoppingCart, parsedProducts)) {
-        Console.print(
-          '[ERROR] 존재하지 않는 상품이 있습니다. 다시 입력해 주세요.',
-        );
-        return askUserInput(parsedProducts); // 재귀 호출
-      }
-
-      if (!validateStockQuantity(shoppingCart, parsedProducts)) {
-        Console.print(
-          '[ERROR] 재고 수량을 초과하여 구매할 수 없습니다. 다시 입력해 주세요.',
-        );
-        return askUserInput(parsedProducts); // 재귀 호출
-      }
-
-      const bills = await processShoppingCart(shoppingCart, parsedProducts);
-      const isMembershipSale = await askUserAgree(
-        '멤버십 할인을 받으시겠습니까? (Y/N)',
-      );
-
-      return { bills, isMembershipSale };
-    }
 
     function printBills(bills, isMembershipSale) {
       const result = '';
@@ -172,13 +66,6 @@ class App {
         break;
       }
     }
-    // const foundProduct = findProduct(parsedProducts, '콜라');
-    // const parsedNumber = await getInputWhileValid(
-    //   isValidProductQuantity,
-    //   '수를 입력해주세요.',
-    //   foundProduct,
-    // );
-    // await sellProduct(foundProduct, Number(parsedNumber));
   }
 }
 
