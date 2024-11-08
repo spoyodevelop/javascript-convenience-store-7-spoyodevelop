@@ -1,6 +1,6 @@
 import { Console } from '@woowacourse/mission-utils';
 
-export default function printBills(isMembershipSale, filteredGoods, totals) {
+export default function displayBills(isMembershipSale, filteredGoods, totals) {
   if (!filteredGoods || filteredGoods.length === 0) return;
 
   const { totalPurchased, totalPromoSale, totalMembershipSale, totalQuantity } =

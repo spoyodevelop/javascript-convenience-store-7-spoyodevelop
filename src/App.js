@@ -5,29 +5,24 @@ import { askUserAgree } from '../View/InputView.js';
 import PRODUCT_LIST from './Model/ProductList.js';
 import parseProducts from './ProductMaker/parseProducts.js';
 import askUserInput from './askUserInput/askUserInput.js';
-import printBills from './printBills/printBills.js';
+import displayBills from './display/displayBills.js';
+import displayWelcomeMessage from './display/displayProducts.js';
 
 class App {
   async run() {
     const parsedProducts = parseProducts(PRODUCT_LIST);
 
     while (true) {
-      this.displayWelcomeMessage(parsedProducts);
+      displayWelcomeMessage(parsedProducts);
       const userInput = await askUserInput(parsedProducts);
       const { isMembershipSale, filteredGoods, totals } =
         this.safeParseUserInput(userInput);
-      printBills(isMembershipSale, filteredGoods, totals);
+      displayBills(isMembershipSale, filteredGoods, totals);
       const moreSale = await this.askForMoreSale();
       if (!moreSale) {
         break;
       }
     }
-  }
-
-  displayWelcomeMessage(products) {
-    Console.print('안녕하세요. W편의점입니다.');
-    Console.print('현재 보유하고 있는 상품입니다.');
-    products.forEach((product) => Console.print(product.toString()));
   }
 
   safeParseUserInput(input) {

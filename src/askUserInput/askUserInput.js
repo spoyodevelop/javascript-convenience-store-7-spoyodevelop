@@ -1,15 +1,15 @@
 import printMessage from '../../View/OutputView.js';
 import { ERROR_MESSAGES } from '../Error/Error.js';
+
+import { askUserAgree } from '../../View/InputView.js';
+import processBills from '../calucators/processBills.js';
+import { USER_MESSAGES } from '../SystemSettings/systemSettings.js';
+import { promptUserInput, parseShoppingCart } from './inputHandler.js';
 import {
-  promptUserInput,
-  parseShoppingCart,
   validateItemsExist,
   validateStockQuantity,
-  processShoppingCart,
-} from './askUserHelper.js';
-import { askUserAgree } from '../../View/InputView.js';
-import processBills from '../processBills/processBills.js';
-import { USER_MESSAGES } from '../SystemSettings/systemSettings.js';
+} from '../Validation/validations.js';
+import { processShoppingCart } from '../calucators/processShopingCart.js';
 
 export default async function askUserInput(parsedProducts) {
   const inputString = await promptUserInput();
