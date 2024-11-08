@@ -34,6 +34,5 @@ export default function validateShoppingCart(inputString) {
     return null;
   }
 
-  shoppingItems.forEach((item) => console.log(item.toString()));
   return shoppingItems;
 }

@@ -21,3 +21,4 @@ export default function validateStockQuantity(shoppingCart, parsedProducts) {
     return Number(item.quantity) <= totalAvailableQuantity;
   });
 }
+// expired 로직을 여기다 적용할까?

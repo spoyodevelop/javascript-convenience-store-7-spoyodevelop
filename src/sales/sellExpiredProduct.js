@@ -1,16 +1,10 @@
 import {
   calculateNonPromoSellQuantity,
   getPromoAndNonPromoProducts,
-  calculatePromoSellQuantity,
 } from './sellHelpers.js';
 
-function calculateTotalMembershipSale(
-  nonPromoSellQuantity,
-  promoSellQuantity,
-  price,
-) {
-  const membershipSaleTotal =
-    (((nonPromoSellQuantity + promoSellQuantity) * price) / 100) * 30;
+function calculateTotalMembershipSale(nonPromoSellQuantity, price) {
+  const membershipSaleTotal = ((nonPromoSellQuantity * price) / 100) * 30;
   return Math.min(membershipSaleTotal, 8000);
 }
 
@@ -18,38 +12,32 @@ export default async function sellExpiredProduct(
   foundProduct,
   sellingQuantity,
 ) {
-  const { promoProduct, nonPromoProduct } =
-    getPromoAndNonPromoProducts(foundProduct);
+  // 프로모션 상품을 무시하고 비프로모션 상품만 처리
+  const { nonPromoProduct } = getPromoAndNonPromoProducts(foundProduct);
+  const { name, price } = nonPromoProduct;
 
-  const { name } = nonPromoProduct;
-  const promoSellQuantity = calculatePromoSellQuantity(
-    sellingQuantity,
-    promoProduct,
-  );
+  // 비프로모션 판매 수량 계산
   const nonPromoSellQuantity = calculateNonPromoSellQuantity(
     sellingQuantity,
-    promoSellQuantity,
+    0,
   );
 
-  if (promoProduct && promoSellQuantity > 0) {
-    promoProduct.sell(promoSellQuantity);
-  }
+  // 비프로모션 재고 판매 처리
   if (nonPromoProduct && nonPromoSellQuantity > 0) {
     nonPromoProduct.sell(nonPromoSellQuantity);
   }
 
-  const { price } = nonPromoProduct;
+  // 멤버십 할인 계산
   const membershipSaleTotal = calculateTotalMembershipSale(
     nonPromoSellQuantity,
-    promoSellQuantity,
     price,
   );
 
+  // 결과 반환
   return {
     name,
-    promoSellQuantity,
     nonPromoSellQuantity,
-    totalQuantity: promoSellQuantity + nonPromoSellQuantity,
+    totalQuantity: nonPromoSellQuantity,
     price,
     membershipSaleTotal,
   };

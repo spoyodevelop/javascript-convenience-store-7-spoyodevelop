@@ -207,6 +207,7 @@ describe('편의점', () => {
       expectedIgnoringWhiteSpaces: ['내실돈46,200'],
     });
   });
+
   test('예외 테스트', async () => {
     await runExceptions({
       inputs: ['[컵라면-12]', 'N', 'N'],
