@@ -9,14 +9,13 @@ import InputView from '../View/InputView.js';
 import OutputView from '../View/OutputView.js';
 import validateItemsExist from '../Validation/validateItemsExist.js';
 import validateStockQuantity from '../Validation/validateStockQuantity.js';
+import { getValidShoppingCart } from './parseInput.js';
 
 export default async function askUserInput(parsedProducts) {
   const inputView = new InputView();
   const outPutView = new OutputView();
 
-  const inputString = await promptUserInput();
-  const shoppingCart = parseShoppingCart(inputString);
-
+  const shoppingCart = await getValidShoppingCart();
   if (!validateItemsExist(shoppingCart, parsedProducts)) {
     outPutView.printMessage(ERROR_MESSAGES.ITEM_NOT_FOUND);
     return askUserInput(parsedProducts);
