@@ -1,4 +1,5 @@
-import { Console } from '@woowacourse/mission-utils';
+import printMessage from '../../View/OutputView.js';
+import { ERROR_MESSAGES } from '../Error/Error.js';
 import {
   promptUserInput,
   parseShoppingCart,
@@ -8,20 +9,19 @@ import {
 } from './askUserHelper.js';
 import { askUserAgree } from '../../View/InputView.js';
 import processBills from '../processBills/processBills.js';
+import { USER_MESSAGES } from '../SystemSettings/systemSettings.js';
 
 export default async function askUserInput(parsedProducts) {
   const inputString = await promptUserInput();
   const shoppingCart = parseShoppingCart(inputString);
 
   if (!validateItemsExist(shoppingCart, parsedProducts)) {
-    Console.print('[ERROR] 존재하지 않는 상품이 있습니다. 다시 입력해 주세요.');
+    printMessage(ERROR_MESSAGES.ITEM_NOT_FOUND);
     return askUserInput(parsedProducts);
   }
 
   if (!validateStockQuantity(shoppingCart, parsedProducts)) {
-    Console.print(
-      '[ERROR] 재고 수량을 초과하여 구매할 수 없습니다. 다시 입력해 주세요.',
-    );
+    printMessage(ERROR_MESSAGES.EXCEEDS_STOCK_QUANTITY);
     return askUserInput(parsedProducts);
   }
 
@@ -32,7 +32,7 @@ export default async function askUserInput(parsedProducts) {
   if (filteredGoods.length === 0) return;
 
   const isMembershipSale = await askUserAgree(
-    '멤버십 할인을 받으시겠습니까? (Y/N)',
+    USER_MESSAGES.ASK_MEMBERSHIP_SALE,
   );
 
   return {

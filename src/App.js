@@ -13,13 +13,10 @@ class App {
 
     while (true) {
       this.displayWelcomeMessage(parsedProducts);
-
       const userInput = await askUserInput(parsedProducts);
       const { isMembershipSale, filteredGoods, totals } =
         this.safeParseUserInput(userInput);
-
       printBills(isMembershipSale, filteredGoods, totals);
-
       const moreSale = await this.askForMoreSale();
       if (!moreSale) {
         break;
