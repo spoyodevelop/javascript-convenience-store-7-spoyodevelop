@@ -1,17 +1,18 @@
-import { askUserAgree } from '../View/InputView.js';
+import InputView from './View/InputView.js';
 
 import PRODUCT_LIST from './Model/ProductList.js';
 import parseProducts from './ProductMaker/parseProducts.js';
 import askUserInput from './askUserInput/askUserInput.js';
 import displayBills from './display/displayBills.js';
-import displayWelcomeMessage from './display/displayProducts.js';
+import OutputView from './View/OutputView.js';
 
 class App {
   async run() {
     const parsedProducts = parseProducts(PRODUCT_LIST);
+    const outputView = new OutputView();
 
     while (true) {
-      displayWelcomeMessage(parsedProducts);
+      outputView.displayWelcomeMessage(parsedProducts);
       const userInput = await askUserInput(parsedProducts);
       const { isMembershipSale, filteredGoods, totals } =
         this.safeParseUserInput(userInput);
@@ -36,7 +37,8 @@ class App {
 
   async askForMoreSale() {
     const message = '감사합니다. 구매하고 싶은 다른 상품이 있나요? (Y/N)';
-    return await askUserAgree(message);
+    const inputView = new InputView();
+    return await inputView.askUserAgree(message);
   }
 }
 

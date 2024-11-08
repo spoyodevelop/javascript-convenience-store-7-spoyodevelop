@@ -4,8 +4,8 @@ import {
   calculatePromoSellQuantity,
   checkFreebieEligibility,
   calculateRemainder,
-} from './sellingHelpers.js';
-import { askUserAgree } from '../../View/InputView.js';
+} from './sellHelpers.js';
+import InputView from '../View/InputView.js';
 
 function calculateMembershipSale(nonPromoSellQuantity, remainder, price) {
   const membershipSaleTotal =
@@ -13,6 +13,7 @@ function calculateMembershipSale(nonPromoSellQuantity, remainder, price) {
   return Math.min(membershipSaleTotal, 8000);
 }
 export default async function sellProduct(foundProduct, sellingQuantity) {
+  const inputView = new InputView();
   // 프로모션 상품과 비프로모션 상품 분리
   const { promoProduct, nonPromoProduct } =
     getPromoAndNonPromoProducts(foundProduct);
@@ -61,7 +62,7 @@ export default async function sellProduct(foundProduct, sellingQuantity) {
     // 이것을 어떻게 처리 해야 할까.... 일단 기본 테스트 코드가 통과 하지 않으니, 수정을 가하지는 않겠음.
     // promoSellQuantity가 1차이로 나면 그때만 할까?
   ) {
-    wantToBuyNonPromo = await askUserAgree(
+    wantToBuyNonPromo = await inputView.askUserAgree(
       `현재 ${name}은(는) ${nonPromoSellQuantity + remainder}개는 프로모션 할인이 적용되지 않습니다. 그래도 구매하시겠습니까? (Y/N)`,
     );
   }

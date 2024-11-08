@@ -2,7 +2,7 @@ import {
   calculateNonPromoSellQuantity,
   getPromoAndNonPromoProducts,
   calculatePromoSellQuantity,
-} from './sellingHelpers.js';
+} from './sellHelpers.js';
 
 function calculateTotalMembershipSale(
   nonPromoSellQuantity,
