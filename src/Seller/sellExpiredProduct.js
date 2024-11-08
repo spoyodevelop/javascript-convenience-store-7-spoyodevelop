@@ -21,7 +21,7 @@ export default async function sellExpiredProduct(
   const { promoProduct, nonPromoProduct } =
     getPromoAndNonPromoProducts(foundProduct);
 
-  const name = nonPromoProduct.getName();
+  const { name } = nonPromoProduct;
   const promoSellQuantity = calculatePromoSellQuantity(
     sellingQuantity,
     promoProduct,
@@ -38,7 +38,7 @@ export default async function sellExpiredProduct(
     nonPromoProduct.sell(nonPromoSellQuantity);
   }
 
-  const price = nonPromoProduct.getPrice();
+  const { price } = nonPromoProduct;
   const membershipSaleTotal = calculateTotalMembershipSale(
     nonPromoSellQuantity,
     promoSellQuantity,

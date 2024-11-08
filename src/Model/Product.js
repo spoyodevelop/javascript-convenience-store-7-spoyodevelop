@@ -18,11 +18,11 @@ export default class Product {
     this.#quantity -= quantity;
   }
 
-  getName() {
+  get name() {
     return this.#name;
   }
 
-  getPrice() {
+  get price() {
     return this.#price;
   }
 

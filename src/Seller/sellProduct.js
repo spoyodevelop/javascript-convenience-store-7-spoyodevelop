@@ -18,7 +18,7 @@ export default async function sellProduct(foundProduct, sellingQuantity) {
     getPromoAndNonPromoProducts(foundProduct);
 
   // 비프로모션 상품 이름
-  const name = nonPromoProduct.getName();
+  const { name } = nonPromoProduct;
 
   // 프로모션 판매 수량 계산
   let promoSellQuantity = calculatePromoSellQuantity(
@@ -82,7 +82,7 @@ export default async function sellProduct(foundProduct, sellingQuantity) {
   }
 
   // 멤버십 할인 계산
-  const price = nonPromoProduct.getPrice();
+  const { price } = nonPromoProduct;
   const membershipSaleTotal = calculateMembershipSale(
     nonPromoSellQuantity,
     remainder,
