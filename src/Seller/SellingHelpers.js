@@ -12,7 +12,7 @@ function getPromoAndNonPromoProducts(foundProduct) {
 
 // 프로모션 판매 수량 계산
 function calculatePromoSellQuantity(sellingQuantity, promoProduct) {
-  const promoQuantity = promoProduct?.getQuantity() ?? 0;
+  const promoQuantity = promoProduct?.quantity ?? 0;
   return Math.min(sellingQuantity, promoQuantity);
 }
 
@@ -31,7 +31,7 @@ async function checkFreebieEligibility(promoProduct, sellingQuantity, name) {
   if (
     promoProduct &&
     promoProduct.askFreeFreebie(sellingQuantity) &&
-    sellingQuantity < promoProduct.getQuantity()
+    sellingQuantity < promoProduct.quantity
   ) {
     return await askUserAgree(
       `현재 ${name}은(는) 1개를 무료로 더 받을 수 있습니다. 추가하시겠습니까? (Y/N)`,

@@ -8,11 +8,11 @@ export default class ShoppingItem {
     this.#quantity = quantity;
   }
 
-  getName() {
+  get name() {
     return this.#name;
   }
 
-  getQuantity() {
+  get quantity() {
     return this.#quantity;
   }
 

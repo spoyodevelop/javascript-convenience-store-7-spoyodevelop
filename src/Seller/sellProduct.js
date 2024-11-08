@@ -4,7 +4,7 @@ import {
   calculatePromoSellQuantity,
   checkFreebieEligibility,
   calculateRemainder,
-} from './SellingHelpers.js';
+} from './sellingHelpers.js';
 import { askUserAgree } from '../../View/InputView.js';
 
 function calculateMembershipSale(nonPromoSellQuantity, remainder, price) {

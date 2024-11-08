@@ -26,7 +26,7 @@ export default class Product {
     return this.#price;
   }
 
-  getQuantity() {
+  get quantity() {
     return this.#quantity;
   }
 

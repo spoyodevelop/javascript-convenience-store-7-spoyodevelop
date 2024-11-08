@@ -21,7 +21,7 @@ function parseShoppingCart(inputString) {
 // 상품이 존재하는지 확인
 function validateItemsExist(shoppingCart, parsedProducts) {
   const invalidItems = shoppingCart.filter((item) => {
-    const foundProduct = findProduct(parsedProducts, item.getName());
+    const foundProduct = findProduct(parsedProducts, item.name);
     return !foundProduct;
   });
   return invalidItems.length === 0;
@@ -30,7 +30,7 @@ function validateItemsExist(shoppingCart, parsedProducts) {
 // 재고 수량 검증
 function validateStockQuantity(shoppingCart, parsedProducts) {
   return shoppingCart.every((item) => {
-    const foundProduct = findProduct(parsedProducts, item.getName());
+    const foundProduct = findProduct(parsedProducts, item.name);
     if (!foundProduct || foundProduct.length === 0) {
       return false; // 상품이 없는 경우 실패
     }
@@ -42,11 +42,11 @@ function validateStockQuantity(shoppingCart, parsedProducts) {
       (product) => !product.isPromoProduct(),
     );
 
-    const promoQuantity = promoProduct?.getQuantity() ?? 0;
-    const nonPromoQuantity = nonPromoProduct?.getQuantity() ?? 0;
+    const promoQuantity = promoProduct?.quantity ?? 0;
+    const nonPromoQuantity = nonPromoProduct?.quantity ?? 0;
     const totalAvailableQuantity = promoQuantity + nonPromoQuantity;
 
-    return Number(item.getQuantity()) <= totalAvailableQuantity;
+    return Number(item.quantity) <= totalAvailableQuantity;
   });
 }
 
@@ -54,16 +54,16 @@ function validateStockQuantity(shoppingCart, parsedProducts) {
 async function processShoppingCart(shoppingCart, parsedProducts) {
   const bills = [];
   for (const item of shoppingCart) {
-    const foundProduct = findProduct(parsedProducts, item.getName());
+    const foundProduct = findProduct(parsedProducts, item.name);
     const [promoProduct] = foundProduct.filter((product) =>
       product.isPromoProduct(),
     );
     let bill;
 
     if (promoProduct && !promoProduct.isExpired(DateTimes.now())) {
-      bill = await sellExpiredProduct(foundProduct, item.getQuantity());
+      bill = await sellExpiredProduct(foundProduct, item.quantity);
     } else {
-      bill = await sellProduct(foundProduct, item.getQuantity());
+      bill = await sellProduct(foundProduct, item.quantity);
     }
     bills.push(bill);
   }
