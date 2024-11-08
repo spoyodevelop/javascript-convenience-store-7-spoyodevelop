@@ -1,8 +1,9 @@
-const promotions = [
-  ['탄산2+1', 2, 1, '2024-01-01', '2024-12-31'],
-  ['MD추천상품', 1, 1, '2024-01-01', '2024-12-31'],
-  ['반짝할인', 1, 1, '2024-11-01', '2024-11-30'],
-];
+const PROMOTIONS_MAP = new Map([
+  ['탄산2+1', [2, 1, '2024-01-01', '2024-12-31']],
+  ['MD추천상품', [1, 1, '2024-01-01', '2024-12-31']],
+  ['반짝할인', [1, 1, '2024-11-01', '2024-11-30']],
+]);
+const NO_PROMO = 'noPromo';
 
 export default class Promotion {
   #name;
@@ -16,57 +17,47 @@ export default class Promotion {
   #end_date;
 
   constructor(name) {
-    if (name === 'noPromo') {
-      this.#name = 'noPromo';
-      this.#buy = 0;
-      this.#get = 0;
-      this.#start_date = 0;
-      this.#end_date = 0;
-    }
+    const promo = PROMOTIONS_MAP.get(name) || [0, 0, null, null];
+    const [buy, get, startDate, endDate] = promo;
 
-    const filteredPromotion = promotions.filter(
-      (promotion) => promotion[0] === name,
-    );
-
-    const [promo] = filteredPromotion;
-
-    if (promo) {
-      const [filteredName, buy, get, filteredStartDate, filteredEndDate] =
-        promo;
-      this.#name = filteredName;
-      this.#buy = buy;
-      this.#get = get;
-      this.#start_date = new Date(filteredStartDate);
-      this.#end_date = new Date(filteredEndDate);
-    }
+    this.#name = PROMOTIONS_MAP.has(name) ? name : NO_PROMO;
+    this.#buy = buy;
+    this.#get = get;
+    this.#start_date = startDate ? new Date(startDate) : null;
+    this.#end_date = endDate ? new Date(endDate) : null;
   }
 
-  getFreeItemNeed() {
+  get name() {
+    return this.#name;
+  }
+
+  get freeItemCountNeeded() {
     return this.#get;
   }
 
-  isAbleToGiveFreebie(purchaseCount) {
-    return purchaseCount % (this.#buy + 1) === this.#buy;
+  canGiveFreeItem(purchaseCount) {
+    return this.#buy > 0 && purchaseCount % (this.#buy + 1) === this.#buy;
   }
 
-  isRemainderLeft(purchaseCount) {
+  hasRemainderItems(purchaseCount) {
     return purchaseCount % (this.#buy + 1);
   }
 
-  getFreeItem(purchaseCount) {
+  calculateFreeItems(purchaseCount) {
     const rate = Math.floor(purchaseCount / (this.#buy + 1));
     return rate * this.#get;
   }
 
-  getPromotionDate(date) {
-    return this.#start_date < date && this.#end_date > date;
-  }
-
-  getName() {
-    return this.#name;
+  isDateWithinPromotion(date) {
+    return (
+      this.#start_date &&
+      this.#end_date &&
+      this.#start_date <= date &&
+      date <= this.#end_date
+    );
   }
 
   toString() {
-    return this.getName() === 'noPromo' ? '' : this.#name;
+    return this.#name === NO_PROMO ? '' : this.#name;
   }
 }

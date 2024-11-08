@@ -1,5 +1,3 @@
-import { Console } from '@woowacourse/mission-utils';
-
 export default class Product {
   #name;
 
@@ -24,26 +22,6 @@ export default class Product {
     return this.#name;
   }
 
-  isPromoProduct() {
-    return this.#promotion.getName() !== 'noPromo';
-  }
-
-  askFreeFreebie(quantity) {
-    return this.#promotion.isAbleToGiveFreebie(quantity);
-  }
-
-  howMuchItemNeedToBeFree() {
-    return this.#promotion.getFreeItemNeed();
-  }
-
-  isRemainderLeft(purchaseCount) {
-    return this.#promotion.isRemainderLeft(purchaseCount);
-  }
-
-  isExpired(date) {
-    return this.#promotion.getPromotionDate(date);
-  }
-
   getPrice() {
     return this.#price;
   }
@@ -52,8 +30,28 @@ export default class Product {
     return this.#quantity;
   }
 
+  isPromoProduct() {
+    return this.#promotion.name !== 'noPromo';
+  }
+
+  askFreeFreebie(quantity) {
+    return this.#promotion.canGiveFreeItem(quantity);
+  }
+
+  howMuchItemNeedToBeFree() {
+    return this.#promotion.freeItemCountNeeded;
+  }
+
+  isRemainderLeft(purchaseCount) {
+    return this.#promotion.hasRemainderItems(purchaseCount);
+  }
+
+  isExpired(date) {
+    return this.#promotion.isDateWithinPromotion(date);
+  }
+
   getBOGO(quantity) {
-    return this.#promotion.getFreeItem(quantity);
+    return this.#promotion.calculateFreeItems(quantity);
   }
 
   #toNumberFormatOfKor(num) {
