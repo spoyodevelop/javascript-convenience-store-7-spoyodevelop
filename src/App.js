@@ -1,5 +1,3 @@
-import { Console } from '@woowacourse/mission-utils';
-
 import { askUserAgree } from '../View/InputView.js';
 
 import PRODUCT_LIST from './Model/ProductList.js';
