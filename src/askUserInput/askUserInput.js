@@ -3,13 +3,12 @@ import { USER_MESSAGES } from '../config/systemSettings.js';
 
 import processBills from '../calculators/processBills.js';
 import { promptUserInput, parseShoppingCart } from './inputHandler.js';
-import {
-  validateItemsExist,
-  validateStockQuantity,
-} from '../Validation/validations.js';
+
 import { processShoppingCart } from '../calculators/processShoppingCart.js';
 import InputView from '../View/InputView.js';
 import OutputView from '../View/OutputView.js';
+import validateItemsExist from '../Validation/validateItemsExist.js';
+import validateStockQuantity from '../Validation/validateStockQuantity.js';
 
 export default async function askUserInput(parsedProducts) {
   const inputView = new InputView();
