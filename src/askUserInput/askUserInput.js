@@ -2,20 +2,18 @@ import { ERROR_MESSAGES } from '../Error/Error.js';
 import { USER_MESSAGES } from '../config/systemSettings.js';
 
 import processBills from '../calculators/processBills.js';
-import { promptUserInput, parseShoppingCart } from './inputHandler.js';
 
 import { processShoppingCart } from '../calculators/processShoppingCart.js';
 import InputView from '../View/InputView.js';
 import OutputView from '../View/OutputView.js';
 import validateItemsExist from '../Validation/validateItemsExist.js';
 import validateStockQuantity from '../Validation/validateStockQuantity.js';
-import { getValidShoppingCart } from './parseInput.js';
 
 export default async function askUserInput(parsedProducts) {
   const inputView = new InputView();
   const outPutView = new OutputView();
 
-  const shoppingCart = await getValidShoppingCart();
+  const shoppingCart = await inputView.getValidShoppingCart();
   if (!validateItemsExist(shoppingCart, parsedProducts)) {
     outPutView.printMessage(ERROR_MESSAGES.ITEM_NOT_FOUND);
     return askUserInput(parsedProducts);
