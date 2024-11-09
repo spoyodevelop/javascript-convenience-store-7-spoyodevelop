@@ -2,7 +2,7 @@ import InputView from './View/InputView.js';
 import OutputView from './View/OutputView.js';
 
 import PRODUCT_LIST from './Model/ProductList.js';
-import parseProducts from './ProductFactory/parseProducts.js';
+import parseProducts from './ProductParser/parseProducts.js';
 import askUserInput from './askUserInput/askUserInput.js';
 
 class App {

@@ -1,4 +1,4 @@
-import { parsePromotionCSV, loadCSVFile } from '../ProductFactory/parseCSV.js';
+import { parsePromotionCSV, loadCSVFile } from '../ProductParser/parseCSV.js';
 import { FILE_PATH } from '../config/defaultSettings.js';
 
 const promotionFilePath = FILE_PATH.PROMOTION_FILE_PATH;

@@ -5,7 +5,6 @@ export default function validateStockQuantity(shoppingCart, parsedProducts) {
   for (const item of shoppingCart) {
     const foundProduct = findProduct(parsedProducts, item.name);
 
-    // 상품이 존재하지 않으면 검증 실패
     if (!Array.isArray(foundProduct) || foundProduct.length === 0) {
       return false;
     }

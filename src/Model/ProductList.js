@@ -1,4 +1,4 @@
-import { parseProductCSV, loadCSVFile } from '../ProductFactory/parseCSV.js';
+import { parseProductCSV, loadCSVFile } from '../ProductParser/parseCSV.js';
 import { FILE_PATH } from '../config/defaultSettings.js';
 
 const productFilePath = FILE_PATH.PRODUCT_FILE_PATH;
