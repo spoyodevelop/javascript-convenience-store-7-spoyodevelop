@@ -10,10 +10,8 @@ class App {
   async run() {
     const parsedProducts = parseProducts(PRODUCT_LIST);
 
-    const outputView = new OutputView();
-
     while (true) {
-      outputView.displayWelcomeMessage(parsedProducts);
+      OutputView.displayWelcomeMessage(parsedProducts);
       const userInput = await askUserInput(parsedProducts);
       const { isMembershipSale, filteredGoods, totals } =
         this.safeParseUserInput(userInput);
@@ -38,8 +36,8 @@ class App {
 
   async askForMoreSale() {
     const message = '감사합니다. 구매하고 싶은 다른 상품이 있나요? (Y/N)';
-    const inputView = new InputView();
-    return await inputView.askUserAgree(message);
+
+    return await InputView.askUserAgree(message);
   }
 }
 

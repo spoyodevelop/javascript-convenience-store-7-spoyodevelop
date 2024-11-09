@@ -9,17 +9,14 @@ import validateItemsExist from '../Validation/validateItemsExist.js';
 import validateStockQuantity from '../Validation/validateStockQuantity.js';
 
 export default async function askUserInput(parsedProducts) {
-  const inputView = new InputView();
-  const outPutView = new OutputView();
-
-  const shoppingCart = await inputView.getValidShoppingCart();
+  const shoppingCart = await InputView.getValidShoppingCart();
   if (!validateItemsExist(shoppingCart, parsedProducts)) {
-    outPutView.printMessage(ERROR_MESSAGES.ITEM_NOT_FOUND);
+    OutputView.printMessage(ERROR_MESSAGES.ITEM_NOT_FOUND);
     return askUserInput(parsedProducts);
   }
 
   if (!validateStockQuantity(shoppingCart, parsedProducts)) {
-    outPutView.printMessage(ERROR_MESSAGES.EXCEEDS_STOCK_QUANTITY);
+    OutputView.printMessage(ERROR_MESSAGES.EXCEEDS_STOCK_QUANTITY);
     return askUserInput(parsedProducts);
   }
 
@@ -29,7 +26,7 @@ export default async function askUserInput(parsedProducts) {
 
   if (filteredGoods.length === 0) return;
 
-  const isMembershipSale = await inputView.askUserAgree(
+  const isMembershipSale = await InputView.askUserAgree(
     USER_MESSAGES.ASK_MEMBERSHIP_SALE,
   );
 

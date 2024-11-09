@@ -135,10 +135,9 @@ async function getSaleQuantities(
 }
 
 export default async function sellProduct(foundProduct, sellingQuantity) {
-  const inputView = new InputView();
   const { promoProduct, nonPromoProduct, name } = getProductInfo(foundProduct);
   const { promoSellQuantity, remainder, nonPromoSellQuantity } =
-    await getSaleQuantities(sellingQuantity, promoProduct, name, inputView);
+    await getSaleQuantities(sellingQuantity, promoProduct, name, InputView);
   processProductSales(
     promoProduct,
     promoSellQuantity,

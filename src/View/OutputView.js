@@ -1,6 +1,6 @@
 import { Console } from '@woowacourse/mission-utils';
 
-class OutputView {
+const OutputView = {
   /**
    * 콘솔에 메시지를 출력합니다.
    *
@@ -8,7 +8,7 @@ class OutputView {
    */
   printMessage(message) {
     Console.print(message);
-  }
+  },
 
   /**
    * 환영 메시지를 출력합니다.
@@ -18,8 +18,10 @@ class OutputView {
   displayWelcomeMessage(products) {
     this.printMessage('안녕하세요. W편의점입니다.');
     this.printMessage('현재 보유하고 있는 상품입니다:');
-    products.forEach((product) => this.printMessage(`${product.toString()}`));
-  }
-}
+    products.forEach((product) => {
+      this.printMessage(`${product.toString()}`);
+    });
+  },
+};
 
 export default OutputView;

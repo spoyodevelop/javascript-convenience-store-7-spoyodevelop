@@ -27,13 +27,12 @@ function calculateNonPromoSellQuantity(sellingQuantity, promoSellQuantity) {
 }
 
 async function checkFreebieEligibility(promoProduct, sellingQuantity, name) {
-  const inputView = new InputView();
   if (
     promoProduct &&
     promoProduct.askFreeFreebie(sellingQuantity) &&
     sellingQuantity < promoProduct.quantity
   ) {
-    return await inputView.askUserAgree(
+    return await InputView.askUserAgree(
       `현재 ${name}은(는) 1개를 무료로 더 받을 수 있습니다. 추가하시겠습니까? (Y/N)`,
     );
   }
