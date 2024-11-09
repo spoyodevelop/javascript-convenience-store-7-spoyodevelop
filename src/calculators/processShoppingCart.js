@@ -13,7 +13,7 @@ async function processShoppingCart(shoppingCart, parsedProducts) {
       product.isPromoProduct(),
     );
 
-    if (promoProduct && !promoProduct.isExpired(DateTimes.now())) {
+    if (promoProduct && !promoProduct.isAvailablePromotion(DateTimes.now())) {
       bills.push(await sellExpiredProduct(foundProduct, item.quantity));
       continue;
     }

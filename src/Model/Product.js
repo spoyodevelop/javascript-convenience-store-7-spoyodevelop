@@ -46,7 +46,7 @@ export default class Product {
     return this.#promotion.hasRemainderItems(purchaseCount);
   }
 
-  isExpired(date) {
+  isAvailablePromotion(date) {
     return this.#promotion.isDateWithinPromotion(date);
   }
 

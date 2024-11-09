@@ -1,24 +1,34 @@
+import { DateTimes } from '@woowacourse/mission-utils';
 import findProduct from '../ProductFinder/findProduct.js';
 
 export default function validateStockQuantity(shoppingCart, parsedProducts) {
-  return shoppingCart.every((item) => {
+  for (const item of shoppingCart) {
     const foundProduct = findProduct(parsedProducts, item.name);
-    if (!foundProduct || foundProduct.length === 0) {
+
+    // 상품이 존재하지 않으면 검증 실패
+    if (!Array.isArray(foundProduct) || foundProduct.length === 0) {
       return false;
     }
 
-    const [promoProduct] = foundProduct.filter((product) =>
+    const promoProduct = foundProduct.find((product) =>
       product.isPromoProduct(),
     );
-    const [nonPromoProduct] = foundProduct.filter(
+    const nonPromoProduct = foundProduct.find(
       (product) => !product.isPromoProduct(),
     );
 
-    const promoQuantity = promoProduct?.quantity ?? 0;
-    const nonPromoQuantity = nonPromoProduct?.quantity ?? 0;
+    let promoQuantity = promoProduct ? promoProduct.quantity : 0;
+    const nonPromoQuantity = nonPromoProduct ? nonPromoProduct.quantity : 0;
+
+    if (promoProduct && !promoProduct.isAvailablePromotion(DateTimes.now())) {
+      promoQuantity = 0;
+    }
+
     const totalAvailableQuantity = promoQuantity + nonPromoQuantity;
 
-    return Number(item.quantity) <= totalAvailableQuantity;
-  });
+    if (Number(item.quantity) > totalAvailableQuantity) {
+      return false;
+    }
+  }
+  return true;
 }
-// expired 로직을 여기다 적용할까?

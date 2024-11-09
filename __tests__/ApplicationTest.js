@@ -1,4 +1,4 @@
-import { MissionUtils } from '@woowacourse/mission-utils';
+import { DateTimes, MissionUtils } from '@woowacourse/mission-utils';
 import { EOL as LINE_SEPARATOR } from 'os';
 import App from '../src/App.js';
 
@@ -205,6 +205,15 @@ describe('편의점', () => {
     await run({
       inputs: ['[감자칩-2],[정식도시락-8]', 'Y', 'N'],
       expectedIgnoringWhiteSpaces: ['내실돈46,200'],
+    });
+  });
+  test('기간에 해당되지 않는 프로모션 적용 및 프로모션에는 프로모션 재고만 사용하는지 확인 ', async () => {
+    mockNowDate('2025-02-01');
+    await runExceptions({
+      inputs: ['[콜라-11]', 'N', 'N'],
+      inputsToTerminate: INPUTS_TO_TERMINATE,
+      expectedErrorMessage:
+        '[ERROR] 재고 수량을 초과하여 구매할 수 없습니다. 다시 입력해 주세요.',
     });
   });
 
