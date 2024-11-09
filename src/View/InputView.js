@@ -1,6 +1,6 @@
 import { Console } from '@woowacourse/mission-utils';
 import validateShoppingCart from '../Validation/validateShoppingCart.js';
-import { ERROR_MESSAGES, USER_MESSAGES } from '../config/systemSettings.js';
+import { ERROR_MESSAGES, USER_MESSAGES } from '../config/defaultSettings.js';
 
 export default class InputView {
   async askUserAgree(promptMessage) {

@@ -1,4 +1,4 @@
-import { USER_MESSAGES, ERROR_MESSAGES } from '../config/systemSettings.js';
+import { USER_MESSAGES, ERROR_MESSAGES } from '../config/defaultSettings.js';
 
 import processBills from '../calculators/processBills.js';
 

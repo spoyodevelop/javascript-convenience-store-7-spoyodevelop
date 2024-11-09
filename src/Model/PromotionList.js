@@ -1,6 +1,7 @@
 import { parsePromotionCSV, loadCSVFile } from '../ProductFactory/parseCSV.js';
+import { FILE_PATH } from '../config/defaultSettings.js';
 
-const promotionFilePath = 'public/promotions.md';
+const promotionFilePath = FILE_PATH.PROMOTION_FILE_PATH;
 
 const promotionCSV = loadCSVFile(promotionFilePath);
 
