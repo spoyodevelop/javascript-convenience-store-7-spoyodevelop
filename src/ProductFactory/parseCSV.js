@@ -50,17 +50,15 @@ function isValidPromotion(promotion) {
   const { name, buy, get, start_date, end_date } = promotion;
 
   if (!name || buy < 0 || get < 0) {
-    console.error(
+    throw new Error(
       `[ERROR] 잘못된 프로모션 데이터: ${JSON.stringify(promotion)}`,
     );
-    return false;
   }
 
   if (!start_date || !end_date || start_date > end_date) {
-    console.error(
+    throw new Error(
       `[ERROR] 유효하지 않은 날짜 범위: ${JSON.stringify(promotion)}`,
     );
-    return false;
   }
 
   return true;
@@ -82,13 +80,15 @@ export function parsePromotionCSV(csvData) {
 }
 
 export function loadCSVFile(filePath) {
-  try {
-    const data = fs.readFileSync(filePath, 'utf-8');
-    return data;
-  } catch (error) {
-    console.error(
-      `[ERROR] 파일을 읽는 중 문제가 발생했습니다: ${error.message}`,
-    );
-    return null;
+  if (!fs.existsSync(filePath)) {
+    throw new Error(`[ERROR] 파일이 존재하지 않습니다: ${filePath}`);
   }
+
+  const data = fs.readFileSync(filePath, 'utf-8');
+
+  if (!data) {
+    throw new Error('[ERROR] 파일 내용을 읽을 수 없습니다.');
+  }
+
+  return data;
 }
