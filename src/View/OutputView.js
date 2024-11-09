@@ -18,16 +18,7 @@ class OutputView {
   displayWelcomeMessage(products) {
     this.printMessage('안녕하세요. W편의점입니다.');
     this.printMessage('현재 보유하고 있는 상품입니다:');
-    products.forEach((product) => this.printMessage(product.toString()));
-  }
-
-  /**
-   * 에러 메시지를 출력합니다.
-   *
-   * @param {string} errorMessage - 출력할 에러 메시지입니다.
-   */
-  displayErrorMessage(errorMessage) {
-    this.printMessage(`🚫 오류: ${errorMessage}`);
+    products.forEach((product) => this.printMessage(`${product.toString()}`));
   }
 }
 

@@ -1,6 +1,6 @@
 import { Console } from '@woowacourse/mission-utils';
 import validateShoppingCart from '../Validation/validateShoppingCart.js';
-import { USER_MESSAGES } from '../config/systemSettings.js';
+import { ERROR_MESSAGES, USER_MESSAGES } from '../config/systemSettings.js';
 
 export default class InputView {
   async askUserAgree(promptMessage) {
@@ -12,7 +12,7 @@ export default class InputView {
     if (input === 'N') {
       return false;
     }
-    Console.print('Y/N 이외에 입력은 할 수 없습니다.');
+    Console.print(ERROR_MESSAGES.INVALID_YN_INPUT);
     return this.askUserAgree(promptMessage);
   }
 
