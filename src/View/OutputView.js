@@ -1,4 +1,5 @@
 import { Console } from '@woowacourse/mission-utils';
+import { USER_MESSAGES } from '../config/defaultSettings.js';
 
 const OutputView = {
   /**
@@ -16,8 +17,8 @@ const OutputView = {
    * @param {Array} products - 현재 보유하고 있는 상품 리스트입니다.
    */
   displayWelcomeMessage(products) {
-    this.printMessage('안녕하세요. W편의점입니다.');
-    this.printMessage('현재 보유하고 있는 상품입니다:');
+    this.printMessage(USER_MESSAGES.WELCOME_MESSAGE);
+    this.printMessage(USER_MESSAGES.SHOW_PRODUCT);
     products.forEach((product) => {
       this.printMessage(`${product.toString()}`);
     });
