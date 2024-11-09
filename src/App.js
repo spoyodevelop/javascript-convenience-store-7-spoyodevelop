@@ -1,10 +1,9 @@
 import InputView from './View/InputView.js';
+import OutputView from './View/OutputView.js';
 
 import PRODUCT_LIST from './Model/ProductList.js';
 import parseProducts from './ProductFactory/parseProducts.js';
 import askUserInput from './askUserInput/askUserInput.js';
-import displayBills from './display/displayBills.js';
-import OutputView from './View/OutputView.js';
 
 class App {
   async run() {
@@ -15,7 +14,7 @@ class App {
       const userInput = await askUserInput(parsedProducts);
       const { isMembershipSale, filteredGoods, totals } =
         this.safeParseUserInput(userInput);
-      displayBills(isMembershipSale, filteredGoods, totals);
+      OutputView.displayBill(isMembershipSale, filteredGoods, totals);
       const moreSale = await this.askForMoreSale();
       if (!moreSale) {
         break;
