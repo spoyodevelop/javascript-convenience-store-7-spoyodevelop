@@ -1,4 +1,5 @@
 import fs from 'fs';
+import { ERROR_MESSAGES } from '../config/systemSettings.js';
 
 function convertProductValue(header, value) {
   if (value === 'null') return null;
@@ -51,13 +52,13 @@ function isValidPromotion(promotion) {
 
   if (!name || buy < 0 || get < 0) {
     throw new Error(
-      `[ERROR] 잘못된 프로모션 데이터: ${JSON.stringify(promotion)}`,
+      `${ERROR_MESSAGES.INVALID_PROMOTION_DATA} ${JSON.stringify(promotion)}`,
     );
   }
 
   if (!start_date || !end_date || start_date > end_date) {
     throw new Error(
-      `[ERROR] 유효하지 않은 날짜 범위: ${JSON.stringify(promotion)}`,
+      `${ERROR_MESSAGES.INVALID_DATE_RANGE} ${JSON.stringify(promotion)}`,
     );
   }
 
@@ -81,13 +82,13 @@ export function parsePromotionCSV(csvData) {
 
 export function loadCSVFile(filePath) {
   if (!fs.existsSync(filePath)) {
-    throw new Error(`[ERROR] 파일이 존재하지 않습니다: ${filePath}`);
+    throw new Error(`${ERROR_MESSAGES.FILE_NOT_FOUND} ${filePath}`);
   }
 
   const data = fs.readFileSync(filePath, 'utf-8');
 
   if (!data) {
-    throw new Error('[ERROR] 파일 내용을 읽을 수 없습니다.');
+    throw new Error(ERROR_MESSAGES.FILE_READ_ERROR);
   }
 
   return data;
