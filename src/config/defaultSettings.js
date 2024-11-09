@@ -3,7 +3,7 @@ const ERROR_PREFIX = '[ERROR]';
 export const ERROR_MESSAGES = Object.freeze({
   ITEM_NOT_FOUND: `${ERROR_PREFIX} 존재하지 않는 상품이 있습니다. 다시 입력해 주세요.\n`,
   EXCEEDS_STOCK_QUANTITY: `${ERROR_PREFIX} 재고 수량을 초과하여 구매할 수 없습니다. 다시 입력해 주세요.\n`,
-  INVALID_FORMAT: `${ERROR_PREFIX} 잘못된 입력 형식입니다. [상품명-수량] 형식으로 입력해 주세요.\n`,
+  INVALID_FORMAT: `${ERROR_PREFIX} 올바르지 않은 형식으로 입력했습니다. 다시 입력해 주세요.\n`,
   INVALID_QUANTITY: `${ERROR_PREFIX} 수량은 1 이상의 정수여야 합니다.\n`,
   INVALID_YN_INPUT: `${ERROR_PREFIX} Y/N 이외에 입력은 할 수 없습니다.\n`,
   FILE_NOT_FOUND: `${ERROR_PREFIX} 파일이 존재하지 않습니다:`,
