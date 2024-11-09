@@ -10,7 +10,7 @@ import InputView from '../View/InputView.js';
 function calculateMembershipSale(nonPromoSellQuantity, remainder, price) {
   const membershipSaleTotal =
     (((nonPromoSellQuantity + remainder) * price) / 100) * 30;
-  return Math.min(membershipSaleTotal, 8000);
+  return membershipSaleTotal;
 }
 
 function getProductInfo(foundProduct) {

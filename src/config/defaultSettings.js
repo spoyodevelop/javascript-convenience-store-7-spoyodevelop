@@ -22,3 +22,5 @@ export const FILE_PATH = Object.freeze({
   PROMOTION_FILE_PATH: 'public/promotions.md',
 });
 export const NO_PROMO = 'noPromo';
+
+export const MAX_MEMBERSHIP_DISCOUNT = 8000;

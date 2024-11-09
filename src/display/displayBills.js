@@ -1,4 +1,5 @@
 import { Console } from '@woowacourse/mission-utils';
+import { MAX_MEMBERSHIP_DISCOUNT } from '../config/defaultSettings.js';
 
 export default function displayBills(isMembershipSale, filteredGoods, totals) {
   if (!filteredGoods || filteredGoods.length === 0) return;
@@ -6,7 +7,6 @@ export default function displayBills(isMembershipSale, filteredGoods, totals) {
   const { totalPurchased, totalPromoSale, totalMembershipSale, totalQuantity } =
     totals;
 
-  const MAX_MEMBERSHIP_DISCOUNT = 8000; // 상수 정의
   const finalMembershipDiscount = Math.min(
     MAX_MEMBERSHIP_DISCOUNT,
     totalMembershipSale,

@@ -4,8 +4,7 @@ import {
 } from './sellHelpers.js';
 
 function calculateTotalMembershipSale(nonPromoSellQuantity, price) {
-  const membershipSaleTotal = ((nonPromoSellQuantity * price) / 100) * 30;
-  return Math.min(membershipSaleTotal, 8000);
+  return ((nonPromoSellQuantity * price) / 100) * 30;
 }
 
 export default async function sellExpiredProduct(
