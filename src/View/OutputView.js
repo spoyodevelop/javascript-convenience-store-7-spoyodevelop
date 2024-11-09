@@ -37,7 +37,7 @@ const OutputView = {
    */
   printGoodsHeader() {
     this.printMessage('==============W 편의점================');
-    this.printMessage('상품명\t\t\t수량\t금액');
+    this.printMessage('상품명\t 수량\t금액');
   },
 
   /**
@@ -84,12 +84,17 @@ const OutputView = {
    * 총액 정보를 출력합니다.
    *
    * @param {string} label - 라벨입니다.
+   * @param {string} quantity - 수량입니다.
    * @param {string} value - 값입니다.
    */
-  printTotalItem(label, value) {
+  printTotalItem(label, quantity, value) {
     const paddedLabel = padString(label, this.columnWidths.name);
+    const paddedQuantity = padString(
+      quantity.toString(),
+      this.columnWidths.quantity,
+    );
     const paddedValue = padString(value, this.columnWidths.price);
-    this.printMessage(`${paddedLabel}\t\t${paddedValue}`);
+    this.printMessage(`${paddedLabel}${paddedQuantity}${paddedValue}`);
   },
 
   /**
@@ -121,18 +126,23 @@ const OutputView = {
    * @param {number} finalTotal - 최종 결제 금액입니다.
    */
   printTotals(isMembershipSale, totals, finalMembershipDiscount, finalTotal) {
-    const { totalPurchased, totalPromoSale } = totals;
+    const { totalPurchased, totalPromoSale, totalQuantity } = totals;
     const effectiveMembershipDiscount = isMembershipSale
       ? finalMembershipDiscount
       : 0;
 
-    this.printTotalItem('총구매액', formatCurrency(totalPurchased));
-    this.printTotalItem('행사할인', `-${formatCurrency(totalPromoSale)}`);
+    this.printTotalItem(
+      '총구매액',
+      totalQuantity,
+      formatCurrency(totalPurchased),
+    );
+    this.printTotalItem('행사할인', '', `-${formatCurrency(totalPromoSale)}`);
     this.printTotalItem(
       '멤버십할인',
+      '',
       `-${formatCurrency(effectiveMembershipDiscount)}`,
     );
-    this.printTotalItem('내실돈', formatCurrency(finalTotal));
+    this.printTotalItem('내실돈', '', formatCurrency(finalTotal));
   },
 
   /**
@@ -146,6 +156,10 @@ const OutputView = {
     if (!filteredGoods || filteredGoods.length === 0) return;
 
     const { totalPurchased, totalPromoSale, totalMembershipSale } = totals;
+
+    // 총 수량 계산 추가
+    const totalQuantity = filteredGoods.reduce((acc, item) => acc + item[1], 0);
+    totals.totalQuantity = totalQuantity;
 
     const finalMembershipDiscount = Math.min(
       MAX_MEMBERSHIP_DISCOUNT,
