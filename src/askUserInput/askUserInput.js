@@ -1,9 +1,8 @@
-import { ERROR_MESSAGES } from '../Error/Error.js';
-import { USER_MESSAGES } from '../config/systemSettings.js';
+import { USER_MESSAGES, ERROR_MESSAGES } from '../config/systemSettings.js';
 
 import processBills from '../calculators/processBills.js';
 
-import { processShoppingCart } from '../calculators/processShoppingCart.js';
+import processShoppingCart from '../calculators/processShoppingCart.js';
 import InputView from '../View/InputView.js';
 import OutputView from '../View/OutputView.js';
 import validateItemsExist from '../Validation/validateItemsExist.js';

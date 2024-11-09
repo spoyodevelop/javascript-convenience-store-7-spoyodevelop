@@ -1,5 +1,5 @@
 import { Console } from '@woowacourse/mission-utils';
-import { ERROR_MESSAGES } from '../Error/Error.js';
+import { ERROR_MESSAGES } from '../config/systemSettings.js';
 import ShoppingItem from '../Model/ShoppingItem.js';
 
 export default function validateShoppingCart(inputString) {

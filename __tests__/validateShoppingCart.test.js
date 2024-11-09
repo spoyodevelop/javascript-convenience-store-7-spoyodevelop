@@ -1,7 +1,7 @@
 import { Console } from '@woowacourse/mission-utils';
 import validateShoppingCart from '../src/Validation/validateShoppingCart.js';
 import ShoppingItem from '../src/Model/ShoppingItem.js';
-import { ERROR_MESSAGES } from '../src/Error/Error.js';
+import { ERROR_MESSAGES } from '../src/config/systemSettings.js';
 
 // Console.print를 모킹하여 테스트에서 출력 확인
 jest.spyOn(Console, 'print').mockImplementation(() => {});

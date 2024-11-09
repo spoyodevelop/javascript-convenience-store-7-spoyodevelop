@@ -16,24 +16,20 @@ export default async function sellExpiredProduct(
   const { nonPromoProduct } = getPromoAndNonPromoProducts(foundProduct);
   const { name, price } = nonPromoProduct;
 
-  // 비프로모션 판매 수량 계산
   const nonPromoSellQuantity = calculateNonPromoSellQuantity(
     sellingQuantity,
     0,
   );
 
-  // 비프로모션 재고 판매 처리
   if (nonPromoProduct && nonPromoSellQuantity > 0) {
     nonPromoProduct.sell(nonPromoSellQuantity);
   }
 
-  // 멤버십 할인 계산
   const membershipSaleTotal = calculateTotalMembershipSale(
     nonPromoSellQuantity,
     price,
   );
 
-  // 결과 반환
   return {
     name,
     nonPromoSellQuantity,

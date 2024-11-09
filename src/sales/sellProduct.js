@@ -14,20 +14,17 @@ function calculateMembershipSale(nonPromoSellQuantity, remainder, price) {
 }
 export default async function sellProduct(foundProduct, sellingQuantity) {
   const inputView = new InputView();
-  // 프로모션 상품과 비프로모션 상품 분리
+
   const { promoProduct, nonPromoProduct } =
     getPromoAndNonPromoProducts(foundProduct);
 
-  // 비프로모션 상품 이름
   const { name } = nonPromoProduct;
 
-  // 프로모션 판매 수량 계산
   let promoSellQuantity = calculatePromoSellQuantity(
     sellingQuantity,
     promoProduct,
   );
 
-  // 무료 상품 추가 여부 확인
   const askUserFreebie = await checkFreebieEligibility(
     promoProduct,
     sellingQuantity,
@@ -37,7 +34,6 @@ export default async function sellProduct(foundProduct, sellingQuantity) {
     promoSellQuantity += 1;
   }
 
-  // 잔여 수량 및 비프로모션 판매 수량 계산
   let remainder = calculateRemainder(promoProduct, promoSellQuantity);
   // let freeItemNeed = 0;
   // if (promoProduct) {
@@ -67,14 +63,12 @@ export default async function sellProduct(foundProduct, sellingQuantity) {
     );
   }
 
-  // 비프로모션 상품 구매를 원하지 않는 경우 처리
   if (!wantToBuyNonPromo) {
     nonPromoSellQuantity = 0;
     promoSellQuantity -= remainder;
     remainder = 0;
   }
 
-  // 판매 처리
   if (promoProduct && promoSellQuantity > 0) {
     promoProduct.sell(promoSellQuantity);
   }
@@ -82,7 +76,6 @@ export default async function sellProduct(foundProduct, sellingQuantity) {
     nonPromoProduct.sell(nonPromoSellQuantity);
   }
 
-  // 멤버십 할인 계산
   const { price } = nonPromoProduct;
   const membershipSaleTotal = calculateMembershipSale(
     nonPromoSellQuantity,
@@ -90,7 +83,6 @@ export default async function sellProduct(foundProduct, sellingQuantity) {
     price,
   );
 
-  // 결과 반환
   return {
     name,
     promoSellQuantity,

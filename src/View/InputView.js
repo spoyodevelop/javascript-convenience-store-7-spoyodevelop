@@ -1,17 +1,8 @@
 import { Console } from '@woowacourse/mission-utils';
 import validateShoppingCart from '../Validation/validateShoppingCart.js';
+import { USER_MESSAGES } from '../config/systemSettings.js';
 
 export default class InputView {
-  async getInputWhileValid(validator, promptMessage, ...args) {
-    const input = await Console.readLineAsync(promptMessage);
-    const validInput = validator(input, ...args);
-
-    if (validInput) {
-      return input;
-    }
-    return this.getInputWhileValid(validator, promptMessage, ...args);
-  }
-
   async askUserAgree(promptMessage) {
     const input = await Console.readLineAsync(promptMessage);
 
@@ -28,7 +19,7 @@ export default class InputView {
   async getValidShoppingCart() {
     while (true) {
       const input = await Console.readLineAsync(
-        '구매하실 상품명과 수량을 입력해 주세요. (예: [사이다-2],[감자칩-1])',
+        USER_MESSAGES.ASK_PRODUCT_NAME_AND_QUANTITY,
       );
 
       const shoppingCart = validateShoppingCart(input);

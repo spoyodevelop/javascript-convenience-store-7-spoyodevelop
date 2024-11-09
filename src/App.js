@@ -1,7 +1,7 @@
 import InputView from './View/InputView.js';
 
 import PRODUCT_LIST from './Model/ProductList.js';
-import parseProducts from './ProductMaker/parseProducts.js';
+import parseProducts from './ProductFactory/parseProducts.js';
 import askUserInput from './askUserInput/askUserInput.js';
 import displayBills from './display/displayBills.js';
 import OutputView from './View/OutputView.js';

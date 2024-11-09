@@ -4,7 +4,10 @@ import sellExpiredProduct from '../sales/sellExpiredProduct.js';
 import findProduct from '../ProductFinder/findProduct.js';
 
 // 장바구니 처리 및 결제
-async function processShoppingCart(shoppingCart, parsedProducts) {
+export default async function processShoppingCart(
+  shoppingCart,
+  parsedProducts,
+) {
   const bills = [];
 
   for (const item of shoppingCart) {
@@ -23,5 +26,3 @@ async function processShoppingCart(shoppingCart, parsedProducts) {
 
   return bills;
 }
-
-export { processShoppingCart };
