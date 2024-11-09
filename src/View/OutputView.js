@@ -44,7 +44,7 @@ const OutputView = {
    * 증정품 헤더를 출력합니다.
    */
   printFreebieHeader() {
-    this.printMessage('=============증\t정===============');
+    this.printMessage('=============증\t\t정===============');
   },
 
   /**
