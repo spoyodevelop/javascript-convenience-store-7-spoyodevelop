@@ -1,3 +1,5 @@
+import { ERROR_MESSAGES } from '../config/defaultSettings.js';
+
 export default class Product {
   #name;
 
@@ -16,7 +18,7 @@ export default class Product {
 
   sell(quantity) {
     if (quantity > this.#quantity)
-      throw new Error('불가능한 값을 입력했습니다.');
+      throw new Error(ERROR_MESSAGES.CRITICAL_QUANTITY_SELL_ERROR);
     this.#quantity -= quantity;
   }
 

@@ -1,6 +1,5 @@
 import PROMOTION_LIST from './PromotionList.js';
-
-const NO_PROMO = 'noPromo';
+import { NO_PROMO } from '../config/defaultSettings.js';
 
 export default class Promotion {
   #name;
@@ -15,7 +14,7 @@ export default class Promotion {
 
   constructor(name) {
     const promo = PROMOTION_LIST.find((item) => item.name === name);
-
+    // 삼항 연산자를 사용 하면 더 깔끔해 질텐데...
     if (promo) {
       this.#name = promo.name;
       this.#buy = promo.buy;

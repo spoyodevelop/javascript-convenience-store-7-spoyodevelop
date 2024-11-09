@@ -10,6 +10,7 @@ export const ERROR_MESSAGES = Object.freeze({
   FILE_READ_ERROR: `${ERROR_PREFIX} 파일 내용을 읽을 수 없습니다.`,
   INVALID_PROMOTION_DATA: `${ERROR_PREFIX} 잘못된 프로모션 데이터:`,
   INVALID_DATE_RANGE: `${ERROR_PREFIX} 유효하지 않은 날짜 범위:`,
+  CRITICAL_QUANTITY_SELL_ERROR: `${ERROR_PREFIX} 재고가 없습니다. 관리자에게 문의하세요.`,
 });
 export const USER_MESSAGES = Object.freeze({
   ASK_MEMBERSHIP_SALE: '멤버십 할인을 받으시겠습니까? (Y/N)\n',
@@ -20,3 +21,4 @@ export const FILE_PATH = Object.freeze({
   PRODUCT_FILE_PATH: 'public/products.md',
   PROMOTION_FILE_PATH: 'public/promotions.md',
 });
+export const NO_PROMO = 'noPromo';
