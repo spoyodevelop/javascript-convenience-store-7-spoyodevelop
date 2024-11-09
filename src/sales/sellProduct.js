@@ -12,19 +12,20 @@ function calculateMembershipSale(nonPromoSellQuantity, remainder, price) {
     (((nonPromoSellQuantity + remainder) * price) / 100) * 30;
   return Math.min(membershipSaleTotal, 8000);
 }
-export default async function sellProduct(foundProduct, sellingQuantity) {
-  const inputView = new InputView();
 
+function getProductInfo(foundProduct) {
   const { promoProduct, nonPromoProduct } =
     getPromoAndNonPromoProducts(foundProduct);
-
   const { name } = nonPromoProduct;
+  return { promoProduct, nonPromoProduct, name };
+}
 
-  let promoSellQuantity = calculatePromoSellQuantity(
-    sellingQuantity,
-    promoProduct,
-  );
-
+async function handleFreebieEligibility(
+  promoProduct,
+  sellingQuantity,
+  name,
+  promoSellQuantity,
+) {
   const askUserFreebie = await checkFreebieEligibility(
     promoProduct,
     sellingQuantity,
@@ -33,31 +34,19 @@ export default async function sellProduct(foundProduct, sellingQuantity) {
   if (askUserFreebie) {
     promoSellQuantity += 1;
   }
+  return promoSellQuantity;
+}
 
-  let remainder = calculateRemainder(promoProduct, promoSellQuantity);
-  // let freeItemNeed = 0;
-  // if (promoProduct) {
-  //   freeItemNeed = promoProduct.howMuchItemNeedToBeFree() + 1;
-  //   // console.log(freeItemNeed);
-  // }
-  let nonPromoSellQuantity = calculateNonPromoSellQuantity(
-    sellingQuantity,
-    promoSellQuantity,
-  );
-
-  // 비프로모션 상품 구매 여부 확인
+async function adjustQuantities(
+  promoProduct,
+  nonPromoSellQuantity,
+  remainder,
+  name,
+  promoSellQuantity,
+  inputView,
+) {
   let wantToBuyNonPromo = true;
-  if (
-    promoProduct &&
-    nonPromoSellQuantity > 0
-    // (promoProduct &&
-    //   promoSellQuantity > 0 &&
-    //   promoSellQuantity + 1 === freeItemNeed)
-    // // ||
-    // (promoSellQuantity > 0 && remainder)
-    // 이것을 어떻게 처리 해야 할까.... 일단 기본 테스트 코드가 통과 하지 않으니, 수정을 가하지는 않겠음.
-    // promoSellQuantity가 1차이로 나면 그때만 할까?
-  ) {
+  if (promoProduct && nonPromoSellQuantity > 0) {
     wantToBuyNonPromo = await inputView.askUserAgree(
       `현재 ${name}은(는) ${nonPromoSellQuantity + remainder}개는 프로모션 할인이 적용되지 않습니다. 그래도 구매하시겠습니까? (Y/N)`,
     );
@@ -69,20 +58,40 @@ export default async function sellProduct(foundProduct, sellingQuantity) {
     remainder = 0;
   }
 
+  return { nonPromoSellQuantity, promoSellQuantity, remainder };
+}
+
+function processProductSales(
+  promoProduct,
+  promoSellQuantity,
+  nonPromoProduct,
+  nonPromoSellQuantity,
+) {
   if (promoProduct && promoSellQuantity > 0) {
     promoProduct.sell(promoSellQuantity);
   }
   if (nonPromoProduct && nonPromoSellQuantity > 0) {
     nonPromoProduct.sell(nonPromoSellQuantity);
   }
+}
 
+function calculateMembershipSaleTotal(
+  nonPromoProduct,
+  nonPromoSellQuantity,
+  remainder,
+) {
   const { price } = nonPromoProduct;
-  const membershipSaleTotal = calculateMembershipSale(
-    nonPromoSellQuantity,
-    remainder,
-    price,
-  );
+  return calculateMembershipSale(nonPromoSellQuantity, remainder, price);
+}
 
+function getReturnObject(
+  name,
+  promoSellQuantity,
+  nonPromoSellQuantity,
+  promoProduct,
+  price,
+  membershipSaleTotal,
+) {
   return {
     name,
     promoSellQuantity,
@@ -92,4 +101,61 @@ export default async function sellProduct(foundProduct, sellingQuantity) {
     price,
     membershipSaleTotal,
   };
+}
+
+async function getSaleQuantities(
+  sellingQuantity,
+  promoProduct,
+  name,
+  inputView,
+) {
+  let promoSellQuantity = calculatePromoSellQuantity(
+    sellingQuantity,
+    promoProduct,
+  );
+  promoSellQuantity = await handleFreebieEligibility(
+    promoProduct,
+    sellingQuantity,
+    name,
+    promoSellQuantity,
+  );
+  const remainder = calculateRemainder(promoProduct, promoSellQuantity);
+  const nonPromoSellQuantity = calculateNonPromoSellQuantity(
+    sellingQuantity,
+    promoSellQuantity,
+  );
+  return adjustQuantities(
+    promoProduct,
+    nonPromoSellQuantity,
+    remainder,
+    name,
+    promoSellQuantity,
+    inputView,
+  );
+}
+
+export default async function sellProduct(foundProduct, sellingQuantity) {
+  const inputView = new InputView();
+  const { promoProduct, nonPromoProduct, name } = getProductInfo(foundProduct);
+  const { promoSellQuantity, remainder, nonPromoSellQuantity } =
+    await getSaleQuantities(sellingQuantity, promoProduct, name, inputView);
+  processProductSales(
+    promoProduct,
+    promoSellQuantity,
+    nonPromoProduct,
+    nonPromoSellQuantity,
+  );
+  const membershipSaleTotal = calculateMembershipSaleTotal(
+    nonPromoProduct,
+    nonPromoSellQuantity,
+    remainder,
+  );
+  return getReturnObject(
+    name,
+    promoSellQuantity,
+    nonPromoSellQuantity,
+    promoProduct,
+    nonPromoProduct.price,
+    membershipSaleTotal,
+  );
 }

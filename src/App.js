@@ -9,6 +9,7 @@ import OutputView from './View/OutputView.js';
 class App {
   async run() {
     const parsedProducts = parseProducts(PRODUCT_LIST);
+
     const outputView = new OutputView();
 
     while (true) {

@@ -15,6 +15,8 @@ export default class Product {
   }
 
   sell(quantity) {
+    if (quantity > this.#quantity)
+      throw new Error('불가능한 값을 입력했습니다.');
     this.#quantity -= quantity;
   }
 
