@@ -1,5 +1,5 @@
 import fs from 'fs';
-// 상품 데이터 파싱 함수
+
 function convertProductValue(header, value) {
   if (value === 'null') return null;
   if (['price', 'quantity'].includes(header)) return Number(value);
@@ -18,7 +18,6 @@ function parseProductLine(line, headers) {
 }
 
 export function parseProductCSV(csvData) {
-  console.log(csvData);
   const [headerLine, ...dataLines] = csvData.trim().split('\n');
   const headers = headerLine.split(',');
 
