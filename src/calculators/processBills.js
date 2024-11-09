@@ -6,21 +6,30 @@ export default function processBills(bills) {
   let totalQuantity = 0;
 
   bills.forEach((bill) => {
-    goods.push([bill.name, bill.totalQuantity, bill.price, bill.freebie]);
+    const {
+      name,
+      totalQuantity: quantity,
+      price,
+      freebie,
+      membershipSaleTotal,
+    } = bill;
 
-    totalQuantity += bill.totalQuantity;
-    totalPurchased += bill.totalQuantity * bill.price;
-    if (bill.freebie) {
-      totalPromoSale += bill.freebie * bill.price;
+    if (quantity !== 0) {
+      goods.push([name, quantity, price, freebie]);
     }
 
-    totalMembershipSale += bill.membershipSaleTotal;
+    totalQuantity += quantity;
+    totalPurchased += quantity * price;
+
+    if (freebie > 0) {
+      totalPromoSale += freebie * price;
+    }
+
+    totalMembershipSale += membershipSaleTotal;
   });
 
-  const filteredGoods = goods.filter((good) => good[1] !== 0);
-
   return {
-    filteredGoods,
+    filteredGoods: goods,
     totals: {
       totalPurchased,
       totalPromoSale,
