@@ -35,7 +35,7 @@ export default class Promotion {
   }
 
   get freeItemCountNeeded() {
-    return this.#get;
+    return this.#buy;
   }
 
   canGiveFreeItem(purchaseCount) {
