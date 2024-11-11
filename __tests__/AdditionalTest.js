@@ -61,6 +61,23 @@ describe('구매 로직 테스트', () => {
       expected: '내실돈46,200',
       mockDate: '2024-02-01',
     },
+    {
+      description: '감자칩-1개를 살때 불필요한 인풋이 뜨지 않는것 테스트',
+      inputs: [
+        '[컵라면-1]',
+        'Y',
+        'Y',
+        '[컵라면-1]',
+        'Y',
+        'Y',
+        '[컵라면-2]',
+        'Y',
+        'Y',
+        'N',
+      ],
+      expected: '내실돈2,380',
+      mockDate: '2024-02-01',
+    },
   ])('$description', async ({ inputs, expected, mockDate }) => {
     if (mockDate) mockNowDate(mockDate);
     await run({
