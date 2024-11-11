@@ -7,36 +7,25 @@ import askUserInput from './askUserInput/askUserInput.js';
 
 class App {
   async run() {
-    const parsedProducts = parseProducts(PRODUCT_LIST);
+    const products = parseProducts(PRODUCT_LIST);
+    let continueSale;
 
-    while (true) {
-      OutputView.displayWelcomeMessage(parsedProducts);
-      const userInput = await askUserInput(parsedProducts);
-      const { isMembershipSale, filteredGoods, totals } =
-        this.safeParseUserInput(userInput);
-      OutputView.displayBill(isMembershipSale, filteredGoods, totals);
-      const moreSale = await this.askForMoreSale();
-      if (!moreSale) {
-        break;
-      }
-    }
+    do {
+      await this.handleUserInput(products);
+      continueSale = await InputView.askUserAgree(
+        '감사합니다. 구매하고 싶은 다른 상품이 있나요? (Y/N)',
+      );
+    } while (continueSale);
   }
 
-  safeParseUserInput(input) {
-    // input이 null, undefined일 경우 기본 값으로 설정
-    return (
-      input || {
-        isMembershipSale: false,
-        filteredGoods: [],
-        totals: {},
-      }
-    );
-  }
-
-  async askForMoreSale() {
-    const message = '감사합니다. 구매하고 싶은 다른 상품이 있나요? (Y/N)';
-
-    return await InputView.askUserAgree(message);
+  async handleUserInput(products) {
+    OutputView.displayWelcomeMessage(products);
+    const {
+      isMembershipSale = false,
+      filteredGoods = [],
+      totals = {},
+    } = (await askUserInput(products)) || {};
+    OutputView.displayBill(isMembershipSale, filteredGoods, totals);
   }
 }
 
