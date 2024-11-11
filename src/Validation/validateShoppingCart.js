@@ -5,13 +5,15 @@ import ShoppingItem from '../Model/ShoppingItem.js';
 function isValidFormat(item) {
   return /^\[([^-]+)-(\d+)]$/.test(item);
 }
+const isNumber = /^(0|[1-9]\d*)$/;
 
 function parseItem(item) {
   const [, name, quantity] = item.match(/^\[([^-]+)-(\d+)]$/);
-  return { name, quantity: Number(quantity) };
+  return { name, quantity };
 }
 
 function isValidQuantity(quantity) {
+  if (!isNumber.test(quantity)) return false;
   return Number.isInteger(quantity) && quantity > 0;
 }
 
@@ -32,7 +34,7 @@ export default function validateShoppingCart(inputString) {
       return;
     }
 
-    shoppingItems.push(new ShoppingItem(name, quantity));
+    shoppingItems.push(new ShoppingItem(name, Number(quantity)));
   });
 
   if (shoppingItems.length === 0) {

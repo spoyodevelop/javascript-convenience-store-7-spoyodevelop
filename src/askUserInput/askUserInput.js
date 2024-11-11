@@ -8,20 +8,26 @@ import OutputView from '../View/OutputView.js';
 import validateItemsExist from '../Validation/validateItemsExist.js';
 import validateStockQuantity from '../Validation/validateStockQuantity.js';
 
-export default async function askUserInput(parsedProducts) {
+async function getValidatedShoppingCart(parsedProducts) {
   const shoppingCart = await InputView.getValidShoppingCart();
+
   if (!validateItemsExist(shoppingCart, parsedProducts)) {
     OutputView.printMessage(ERROR_MESSAGES.ITEM_NOT_FOUND);
-    return askUserInput(parsedProducts);
+    return getValidatedShoppingCart(parsedProducts);
   }
 
   if (!validateStockQuantity(shoppingCart, parsedProducts)) {
     OutputView.printMessage(ERROR_MESSAGES.EXCEEDS_STOCK_QUANTITY);
-    return askUserInput(parsedProducts);
+    return getValidatedShoppingCart(parsedProducts);
   }
 
-  const bills = await processShoppingCart(shoppingCart, parsedProducts);
+  return shoppingCart;
+}
 
+export default async function askUserInput(parsedProducts) {
+  const shoppingCart = await getValidatedShoppingCart(parsedProducts);
+
+  const bills = await processShoppingCart(shoppingCart, parsedProducts);
   const { filteredGoods, totals } = processBills(bills);
 
   if (filteredGoods.length === 0) return;
