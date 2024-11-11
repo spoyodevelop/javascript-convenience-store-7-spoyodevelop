@@ -37,7 +37,7 @@ async function handleFreebieEligibility(
   return promoSellQuantity;
 }
 
-async function adjustQuantities(
+export async function adjustQuantities(
   promoProduct,
   nonPromoSellQuantity,
   remainder,
