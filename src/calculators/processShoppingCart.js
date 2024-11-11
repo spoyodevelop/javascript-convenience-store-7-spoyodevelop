@@ -3,7 +3,6 @@ import sellProduct from '../ProductSales/sellProduct.js';
 import sellExpiredProduct from '../ProductSales/sellExpiredProduct.js';
 import findProduct from '../ProductFinder/findProduct.js';
 
-// 장바구니 처리 및 결제
 export default async function processShoppingCart(
   shoppingCart,
   parsedProducts,

@@ -7,7 +7,7 @@ import {
   formatCurrency,
   padString,
   calculateFinalTotal,
-} from '../util/util.js'; // 경로는 프로젝트 구조에 맞게 조정하세요
+} from '../Utility/util.js';
 
 const OutputView = {
   /**

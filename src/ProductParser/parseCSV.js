@@ -25,7 +25,6 @@ export function parseProductCSV(csvData) {
   return dataLines.map((line) => parseProductLine(line, headers));
 }
 
-// 프로모션 데이터 파싱 함수
 function convertPromotionValue(header, value) {
   if (value === 'null') return null;
   if (['buy', 'get'].includes(header)) return Number(value);
