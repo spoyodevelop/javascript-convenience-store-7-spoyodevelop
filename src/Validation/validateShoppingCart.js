@@ -20,27 +20,24 @@ function isValidQuantity(quantity) {
 
 export default function validateShoppingCart(inputString) {
   const shoppingItems = [];
+  const items = inputString.split(',');
 
-  inputString.split(',').forEach((item) => {
+  for (const item of items) {
     const trimmedItem = item.trim();
 
     if (!isValidFormat(trimmedItem)) {
       Console.print(ERROR_MESSAGES.INVALID_FORMAT);
-      return;
+      return null;
     }
 
     const { name, quantity } = parseItem(trimmedItem);
     if (!isValidQuantity(quantity)) {
       Console.print(ERROR_MESSAGES.INVALID_QUANTITY);
-      return;
+      return null;
     }
 
     shoppingItems.push(new ShoppingItem(name, Number(quantity)));
-  });
-
-  if (shoppingItems.length === 0) {
-    return null;
   }
 
-  return shoppingItems;
+  return shoppingItems.length > 0 ? shoppingItems : null;
 }
