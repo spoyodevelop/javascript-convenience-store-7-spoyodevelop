@@ -29,7 +29,7 @@ export function parseProductCSV(csvData) {
 function convertPromotionValue(header, value) {
   if (value === 'null') return null;
   if (['buy', 'get'].includes(header)) return Number(value);
-  if (['start_date', 'end_date'].includes(header)) {
+  if (['startDate', 'endDate'].includes(header)) {
     const date = new Date(value);
     return Number.isNaN(date) ? null : date;
   }
@@ -41,14 +41,31 @@ function parsePromotionLine(line, headers) {
   const promotion = {};
 
   headers.forEach((header, index) => {
-    promotion[header] = convertPromotionValue(header, values[index]);
+    let convertedHeader;
+
+    if (header === 'start_date') {
+      convertedHeader = 'startDate';
+    }
+
+    if (header === 'end_date') {
+      convertedHeader = 'endDate';
+    }
+
+    if (header !== 'start_date' && header !== 'end_date') {
+      convertedHeader = header;
+    }
+
+    promotion[convertedHeader] = convertPromotionValue(
+      convertedHeader,
+      values[index],
+    );
   });
 
   return promotion;
 }
 
 function isValidPromotion(promotion) {
-  const { name, buy, get, start_date, end_date } = promotion;
+  const { name, buy, get, startDate, endDate } = promotion;
 
   if (!name || buy < 0 || get < 0) {
     throw new Error(
@@ -56,7 +73,7 @@ function isValidPromotion(promotion) {
     );
   }
 
-  if (!start_date || !end_date || start_date > end_date) {
+  if (!startDate || !endDate || startDate > endDate) {
     throw new Error(
       `${ERROR_MESSAGES.INVALID_DATE_RANGE} ${JSON.stringify(promotion)}`,
     );

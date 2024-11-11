@@ -8,9 +8,9 @@ export default class Promotion {
 
   #get;
 
-  #start_date;
+  #startDate;
 
-  #end_date;
+  #endDate;
 
   constructor(name) {
     const promo = PROMOTION_LIST.find((item) => item.name === name);
@@ -19,14 +19,14 @@ export default class Promotion {
       this.#name = promo.name;
       this.#buy = promo.buy;
       this.#get = promo.get;
-      this.#start_date = new Date(promo.start_date);
-      this.#end_date = new Date(promo.end_date);
+      this.#startDate = new Date(promo.startDate);
+      this.#endDate = new Date(promo.endDate);
     } else {
       this.#name = NO_PROMO;
       this.#buy = 0;
       this.#get = 0;
-      this.#start_date = null;
-      this.#end_date = null;
+      this.#startDate = null;
+      this.#endDate = null;
     }
   }
 
@@ -53,10 +53,10 @@ export default class Promotion {
 
   isDateWithinPromotion(date) {
     return (
-      this.#start_date &&
-      this.#end_date &&
-      this.#start_date <= date &&
-      date <= this.#end_date
+      this.#startDate &&
+      this.#endDate &&
+      this.#startDate <= date &&
+      date <= this.#endDate
     );
   }
 

@@ -19,12 +19,13 @@ const InputView = {
       return false;
     }
     Console.print(ERROR_MESSAGES.INVALID_YN_INPUT);
-    return await this.askUserAgree(promptMessage); // 재귀 호출
+    return this.askUserAgree(promptMessage); // 재귀 호출
   },
 
   /**
    * 유효한 장바구니 입력을 받을 때까지 반복합니다.
    *
+   * 재귀를 사용하지 않습니다.
    * @returns {Promise<Array>} - 유효한 장바구니 배열 반환
    */
   async getValidShoppingCart() {
