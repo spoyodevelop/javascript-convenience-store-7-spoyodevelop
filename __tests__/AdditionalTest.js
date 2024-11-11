@@ -3,6 +3,10 @@ import { run, runExceptions, mockNowDate } from '../src/Test/Test.js';
 const INPUTS_TO_TERMINATE = ['[비타민워터-1]', 'N', 'N'];
 
 describe('구매 로직 테스트', () => {
+  afterEach(() => {
+    jest.restoreAllMocks();
+  });
+
   test.each([
     {
       description: '8000원 맴버쉽 천장확인',
@@ -62,7 +66,7 @@ describe('구매 로직 테스트', () => {
       mockDate: '2024-02-01',
     },
     {
-      description: '감자칩-1개를 살때 불필요한 인풋이 뜨지 않는것 테스트',
+      description: '컵라면 1개를 살때 불필요한 인풋이 뜨지 않는것 테스트',
       inputs: [
         '[컵라면-1]',
         'Y',
@@ -76,7 +80,12 @@ describe('구매 로직 테스트', () => {
         'N',
       ],
       expected: '내실돈2,380',
-      mockDate: '2024-02-01',
+    },
+    {
+      description:
+        '컵라면 2개를 살때 제대로 비 프로모 제품을 제대로 물어보는지에 대한 테스트',
+      inputs: ['[컵라면-2]', 'N', 'Y', '[컵라면-2]', 'Y', 'Y', 'N'],
+      expected: '내실돈2,380',
     },
   ])('$description', async ({ inputs, expected, mockDate }) => {
     if (mockDate) mockNowDate(mockDate);

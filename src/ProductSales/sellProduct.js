@@ -54,7 +54,7 @@ async function adjustQuantities(
       promoSellQuantity + nonPromoSellQuantity
   ) {
     wantToBuyNonPromo = await inputView.askUserAgree(
-      `현재 ${name}은(는) ${nonPromoSellQuantity + remainder}개는 프로모션 할인이 적용되지 않습니다. 그래도 구매하시겠습니까? (Y/N)`,
+      `현재 ${name}은(는) ${remainder + nonPromoSellQuantity}개는 프로모션 할인이 적용되지 않습니다. 그래도 구매하시겠습니까? (Y/N)`,
     );
   }
 
