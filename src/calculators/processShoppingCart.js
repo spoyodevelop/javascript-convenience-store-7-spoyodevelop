@@ -1,6 +1,6 @@
 import { DateTimes } from '@woowacourse/mission-utils';
-import sellProduct from '../Sales/sellProduct.js';
-import sellExpiredProduct from '../Sales/sellExpiredProduct.js';
+import sellProduct from '../ProductSales/sellProduct.js';
+import sellExpiredProduct from '../ProductSales/sellExpiredProduct.js';
 import findProduct from '../ProductFinder/findProduct.js';
 
 // 장바구니 처리 및 결제
