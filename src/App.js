@@ -5,6 +5,7 @@ import PRODUCT_LIST from './Model/ProductList.js';
 import parseProducts from './ProductParser/parseProducts.js';
 import askUserInput from './askUserInput/askUserInput.js';
 import { USER_MESSAGES } from './config/defaultSettings.js';
+import { areAllProductsSoldOut } from './Utility/util.js';
 
 class App {
   async run() {
@@ -13,10 +14,8 @@ class App {
 
     do {
       await this.handleUserInput(products);
-      if (this.areAllProductsSoldOut(products)) {
-        OutputView.printMessage(
-          '재고가 다 팔렸습니다. 금일 판매를 종료합니다.',
-        );
+      if (areAllProductsSoldOut(products)) {
+        OutputView.printMessage(USER_MESSAGES.ALL_PRODUCTS_SOLD_OUT);
         return;
       }
       continueSale = await InputView.askUserAgree(
@@ -33,11 +32,6 @@ class App {
       totals = {},
     } = (await askUserInput(products)) || {};
     OutputView.displayBill(isMembershipSale, filteredGoods, totals);
-  }
-
-  areAllProductsSoldOut(products) {
-    if (!Array.isArray(products)) return false;
-    return products.every((product) => product.quantity === 0);
   }
 }
 

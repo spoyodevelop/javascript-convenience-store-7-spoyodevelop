@@ -19,6 +19,7 @@ export const USER_MESSAGES = Object.freeze({
     '구매하실 상품명과 수량을 입력해 주세요. (예: [사이다-2],[감자칩-1])\n',
   WELCOME_MESSAGE: '안녕하세요. W편의점입니다.\n',
   SHOW_PRODUCT: '현재 보유하고 있는 상품입니다:\n',
+  ALL_PRODUCTS_SOLD_OUT: '재고가 다 팔렸습니다. 금일 판매를 종료합니다.\n',
 });
 export const FILE_PATH = Object.freeze({
   PRODUCT_FILE_PATH: 'public/products.md',

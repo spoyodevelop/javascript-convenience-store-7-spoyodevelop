@@ -29,3 +29,8 @@ export function padString(str, width, alignment = 'left') {
   }
   return str;
 }
+
+export function areAllProductsSoldOut(products) {
+  if (!Array.isArray(products)) return false;
+  return products.every((product) => product.quantity === 0);
+}
