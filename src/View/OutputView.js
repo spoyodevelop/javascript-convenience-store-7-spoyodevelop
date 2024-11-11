@@ -127,9 +127,10 @@ const OutputView = {
    */
   printTotals(isMembershipSale, totals, finalMembershipDiscount, finalTotal) {
     const { totalPurchased, totalPromoSale, totalQuantity } = totals;
-    const effectiveMembershipDiscount = isMembershipSale
-      ? finalMembershipDiscount
-      : 0;
+    let effectiveMembershipDiscount = 0;
+    if (isMembershipSale) {
+      effectiveMembershipDiscount = finalMembershipDiscount;
+    }
 
     this.printTotalItem(
       '총구매액',
