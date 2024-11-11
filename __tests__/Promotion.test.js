@@ -1,47 +1,79 @@
+import { DateTimes } from '@woowacourse/mission-utils';
 import Promotion from '../src/Model/Promotion.js';
 
-describe('Promotion canGiveFreeItem Method', () => {
-  const testDateWithinPromotion = new Date('2024-06-15'); // 프로모션 기간 내 날짜
+describe('Promotion canGiveFreeItem 및 isDateWithinPromotion 함수', () => {
+  const testDateWithinPromotion = DateTimes.now(); // 프로모션 기간 내 날짜
   const testDateOutsidePromotion = new Date('2025-01-01'); // 프로모션 기간 외 날짜
+  const edgeCaseDate = new Date('2024-12-31'); // 프로모션 종료일
 
   const testCases = [
     {
       promoName: '탄산2+1',
-      purchaseCounts: [1, 2, 3, 4, 5, 6],
-      testDate: testDateWithinPromotion,
-      expectedResults: [false, true, false, false, true, false],
+      purchaseCounts: [1, 2, 3, 4, 5, 6, 10, 20],
+      testDates: [
+        { date: testDateWithinPromotion, type: 'within' },
+        { date: edgeCaseDate, type: 'edge' },
+        { date: testDateOutsidePromotion, type: 'outside' },
+      ],
+      expectedResults: {
+        within: [false, true, false, false, true, false, false, true],
+        edge: [false, true, false, false, true, false, false, true],
+        outside: [false, false, false, false, false, false, false, false],
+      },
     },
     {
       promoName: 'MD추천상품',
-      purchaseCounts: [1, 2, 3, 4, 5, 6],
-      testDate: testDateWithinPromotion,
-      expectedResults: [true, false, true, false, true, false],
+      purchaseCounts: [1, 2, 3, 4, 5, 6, 10, 20],
+      testDates: [
+        { date: testDateWithinPromotion, type: 'within' },
+        { date: edgeCaseDate, type: 'edge' },
+        { date: testDateOutsidePromotion, type: 'outside' },
+      ],
+      expectedResults: {
+        within: [true, false, true, false, true, false, false, false],
+        edge: [true, false, true, false, true, false, false, false],
+        outside: [false, false, false, false, false, false, false, false],
+      },
     },
     {
       promoName: '반짝할인',
-      purchaseCounts: [1, 2, 3, 4],
-      testDate: new Date('2024-11-15'), // 프로모션 기간 내 날짜
-      expectedResults: [true, false, true, false],
-    },
-    {
-      promoName: '반짝할인',
-      purchaseCounts: [1, 2, 3, 4],
-      testDate: testDateOutsidePromotion, // 프로모션 기간 외 날짜
-      expectedResults: [false, false, false, false],
+      purchaseCounts: [1, 2, 3, 4, 5, 10, 20],
+      testDates: [
+        { date: new Date('2024-11-15'), type: 'within' },
+        { date: edgeCaseDate, type: 'edge' },
+        { date: testDateOutsidePromotion, type: 'outside' },
+      ],
+      expectedResults: {
+        within: [true, false, true, false, true, false, false],
+        edge: [false, false, false, false, false, false, false],
+        outside: [false, false, false, false, false, false, false],
+      },
     },
   ];
 
   testCases.forEach(
-    ({ promoName, purchaseCounts, testDate, expectedResults }) => {
+    ({ promoName, purchaseCounts, testDates, expectedResults }) => {
       describe(`프로모션명: ${promoName}`, () => {
-        const promo = new Promotion(promoName);
+        let promo;
+        beforeEach(() => {
+          promo = new Promotion(promoName);
+        });
 
-        purchaseCounts.forEach((count, index) => {
-          test(`구매 수량: ${count}, 테스트 날짜: ${testDate.toISOString().split('T')[0]}`, () => {
-            const isWithinPromotion = promo.isDateWithinPromotion(testDate);
-            const canGive = promo.canGiveFreeItem(count);
-            const result = isWithinPromotion && canGive;
-            expect(result).toBe(expectedResults[index]);
+        testDates.forEach(({ date, type }) => {
+          purchaseCounts.forEach((count, index) => {
+            test(`구매 수량: ${count}, 날짜: ${date.toISOString().split('T')[0]} (${type})`, () => {
+              const isWithinPromotion = promo.isDateWithinPromotion(date);
+              const canGive = promo.canGiveFreeItem(count);
+              const result = isWithinPromotion && canGive;
+
+              if (type === 'within') {
+                expect(result).toBe(expectedResults.within[index]);
+              } else if (type === 'edge') {
+                expect(result).toBe(expectedResults.edge[index]);
+              } else if (type === 'outside') {
+                expect(result).toBe(expectedResults.outside[index]);
+              }
+            });
           });
         });
       });
