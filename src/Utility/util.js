@@ -1,42 +1,31 @@
-/**
- * 통화 형식으로 숫자를 변환합니다.
- *
- * @param {number} num - 변환할 숫자입니다.
- * @returns {string} - 변환된 문자열입니다.
- */
-export function formatCurrency(num) {
-  return num.toLocaleString('ko-KR');
+export function formatCurrency(value) {
+  return value.toLocaleString('ko-KR');
 }
 
-/**
- * 문자열을 지정된 길이로 패딩합니다.
- *
- * @param {string} str - 패딩할 문자열입니다.
- * @param {number} totalLength - 총 길이입니다.
- * @returns {string} - 패딩된 문자열입니다.
- */
-export function padString(str, totalLength) {
-  const spaceCount = totalLength - str.length;
-  return str + ' '.repeat(spaceCount > 0 ? spaceCount : 0);
-}
-
-/**
- * 최종 결제 금액을 계산합니다.
- *
- * @param {boolean} isMembership - 멤버십 할인 여부입니다.
- * @param {number} purchased - 총 구매액입니다.
- * @param {number} promo - 행사 할인액입니다.
- * @param {number} membership - 멤버십 할인액입니다.
- * @returns {number} - 최종 결제 금액입니다.
- */
 export function calculateFinalTotal(
-  isMembership,
-  purchased,
-  promo,
-  membership,
+  isMembershipSale,
+  totalPurchased,
+  totalPromoSale,
+  finalMembershipDiscount,
 ) {
-  if (isMembership) {
-    return purchased - promo - membership;
+  let finalTotal = totalPurchased - totalPromoSale;
+  if (isMembershipSale) {
+    finalTotal -= finalMembershipDiscount;
   }
-  return purchased - promo;
+  return finalTotal;
+}
+
+export function padString(str, width, alignment = 'left') {
+  const isNumber = /^[\d,.\-]+$/.test(str); // 숫자인 경우
+  const strLength = isNumber ? str.length : str.length * 2; // 숫자는 그대로, 한글은 길이 2로 간주
+  const paddingWidth = width - strLength;
+  const padding = ' '.repeat(Math.max(0, paddingWidth));
+
+  if (alignment === 'left') {
+    return str + padding;
+  }
+  if (alignment === 'right') {
+    return padding + str;
+  }
+  return str;
 }
