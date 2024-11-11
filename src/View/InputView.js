@@ -10,16 +10,19 @@ const InputView = {
    * @returns {Promise<boolean>} - Y면 true, N이면 false 반환
    */
   async askUserAgree(promptMessage) {
-    const input = await Console.readLineAsync(promptMessage);
+    while (true) {
+      const input = await Console.readLineAsync(promptMessage);
+      const sanitatedInput = input.trim().toUpperCase();
 
-    if (input === 'Y') {
-      return true;
+      if (sanitatedInput === 'Y') {
+        return true;
+      }
+      if (sanitatedInput === 'N') {
+        return false;
+      }
+
+      Console.print(ERROR_MESSAGES.INVALID_YN_INPUT);
     }
-    if (input === 'N') {
-      return false;
-    }
-    Console.print(ERROR_MESSAGES.INVALID_YN_INPUT);
-    return this.askUserAgree(promptMessage); // 재귀 호출
   },
 
   /**
