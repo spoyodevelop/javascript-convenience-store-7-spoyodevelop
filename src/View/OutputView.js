@@ -17,61 +17,42 @@ const OutputView = {
   displayWelcomeMessage(products) {
     this.printMessage(USER_MESSAGES.WELCOME_MESSAGE);
     this.printMessage(USER_MESSAGES.SHOW_PRODUCT);
-    products.forEach((product) => {
-      this.printMessage(`${product.toString()}`);
-    });
+    products.forEach((product) => this.printMessage(product.toString()));
   },
 
-  printGoodsHeader() {
-    this.printMessage('==============W 편의점==============');
-    const header = [
-      padString('상품명', this.columnWidths.name, 'left'),
-      padString('수량', this.columnWidths.quantity + 3, 'right'),
-      padString('금액', this.columnWidths.price - 4, 'right'),
-    ].join('');
-    this.printMessage(header);
+  printHeader(title) {
+    this.printMessage(title);
   },
 
-  printFreebieHeader() {
-    this.printMessage('=============증정품=================');
-  },
-
-  printGoodsItem(item) {
-    const [name, quantity, price] = item;
-    const paddedName = padString(name, this.columnWidths.name, 'left');
-    const paddedQuantity = padString(
-      quantity.toString(),
-      this.columnWidths.quantity,
-      'right',
+  formatItem(name, quantity, price) {
+    return (
+      padString(name, this.columnWidths.name, 'left') +
+      padString(quantity.toString(), this.columnWidths.quantity, 'right') +
+      padString(
+        formatCurrency(price * quantity),
+        this.columnWidths.price,
+        'right',
+      )
     );
-    const paddedPrice = padString(
-      formatCurrency(price * quantity),
-      this.columnWidths.price,
-      'right',
-    );
-    this.printMessage(`${paddedName}${paddedQuantity}${paddedPrice}`);
   },
 
-  printFreebieItem(item) {
-    const [name, , , freebie] = item;
-    const paddedName = padString(name, this.columnWidths.name, 'left');
-    const paddedFreebie = padString(
-      freebie.toString(),
-      this.columnWidths.freebie,
-      'right',
+  printGoodsItem([name, quantity, price]) {
+    this.printMessage(this.formatItem(name, quantity, price));
+  },
+
+  printFreebieItem([name, , , freebie]) {
+    this.printMessage(
+      padString(name, this.columnWidths.name, 'left') +
+        padString(freebie.toString(), this.columnWidths.freebie, 'right'),
     );
-    this.printMessage(`${paddedName}${paddedFreebie}`);
   },
 
   printTotalItem(label, quantity, value) {
-    const paddedLabel = padString(label, this.columnWidths.name, 'left');
-    const paddedQuantity = padString(
-      quantity.toString(),
-      this.columnWidths.quantity,
-      'right',
-    );
-    const paddedValue = padString(value, this.columnWidths.price, 'right');
-    this.printMessage(`${paddedLabel}${paddedQuantity}${paddedValue}`);
+    const formattedItem =
+      padString(label, this.columnWidths.name, 'left') +
+      padString(quantity.toString(), this.columnWidths.quantity, 'right') +
+      padString(value, this.columnWidths.price, 'right');
+    this.printMessage(formattedItem);
   },
 
   printGoods(filteredGoods) {
@@ -84,12 +65,17 @@ const OutputView = {
       .forEach((item) => this.printFreebieItem(item));
   },
 
-  printTotals(isMembershipSale, totals, finalMembershipDiscount, finalTotal) {
-    const { totalPurchased, totalPromoSale, totalQuantity } = totals;
-    let effectiveMembershipDiscount = 0;
+  calculateDiscount(isMembershipSale, totals) {
+    let discount = 0;
     if (isMembershipSale) {
-      effectiveMembershipDiscount = finalMembershipDiscount;
+      discount = totals.totalMembershipSale;
     }
+    return Math.min(MAX_MEMBERSHIP_DISCOUNT, discount);
+  },
+
+  printTotals(isMembershipSale, totals, finalTotal) {
+    const { totalPurchased, totalPromoSale, totalQuantity } = totals;
+    const membershipDiscount = this.calculateDiscount(isMembershipSale, totals);
 
     this.printTotalItem(
       '총구매액',
@@ -100,48 +86,45 @@ const OutputView = {
     this.printTotalItem(
       '멤버십할인',
       '',
-      `-${formatCurrency(effectiveMembershipDiscount)}`,
+      `-${formatCurrency(membershipDiscount)}`,
     );
     this.printTotalItem('내실돈', '', formatCurrency(finalTotal));
   },
 
+  calculateFinalValues(isMembershipSale, totals) {
+    totals.totalQuantity = totals.filteredGoods.reduce(
+      (acc, item) => acc + item[1],
+      0,
+    );
+    const membershipDiscount = this.calculateDiscount(isMembershipSale, totals);
+    return calculateFinalTotal(
+      isMembershipSale,
+      totals.totalPurchased,
+      totals.totalPromoSale,
+      membershipDiscount,
+    );
+  },
+  printGoodsHeader() {
+    const header =
+      padString('상품명', this.columnWidths.name, 'left') +
+      padString('수량', this.columnWidths.quantity + 3, 'right') +
+      padString('금액', this.columnWidths.price - 4, 'right');
+    this.printMessage(header);
+  },
   displayBill(isMembershipSale, filteredGoods, totals) {
     if (!filteredGoods || filteredGoods.length === 0) return;
 
-    const { totalPurchased, totalPromoSale, totalMembershipSale } = totals;
-    const totalQuantity = filteredGoods.reduce((acc, item) => acc + item[1], 0);
-    totals.totalQuantity = totalQuantity;
+    this.columnWidths = { name: 10, quantity: 8, price: 12, freebie: 8 };
+    totals.filteredGoods = filteredGoods;
+    const finalTotal = this.calculateFinalValues(isMembershipSale, totals);
 
-    const finalMembershipDiscount = Math.min(
-      MAX_MEMBERSHIP_DISCOUNT,
-      totalMembershipSale,
-    );
-
-    this.columnWidths = {
-      name: 10,
-      quantity: 8,
-      price: 12,
-      freebie: 8,
-    };
-
-    const finalTotal = calculateFinalTotal(
-      isMembershipSale,
-      totalPurchased,
-      totalPromoSale,
-      finalMembershipDiscount,
-    );
-
+    this.printHeader('==============W 편의점==============');
     this.printGoodsHeader();
     this.printGoods(filteredGoods);
-    this.printFreebieHeader();
+    this.printHeader('=============증   정=================');
     this.printFreebies(filteredGoods);
-    this.printMessage('====================================');
-    this.printTotals(
-      isMembershipSale,
-      totals,
-      finalMembershipDiscount,
-      finalTotal,
-    );
+    this.printHeader('===================================');
+    this.printTotals(isMembershipSale, totals, finalTotal);
   },
 };
 
