@@ -13,6 +13,7 @@ export const ERROR_MESSAGES = Object.freeze({
   CRITICAL_QUANTITY_SELL_ERROR: `${ERROR_PREFIX} 재고가 없습니다. 관리자에게 문의하세요.`,
 });
 export const USER_MESSAGES = Object.freeze({
+  ASK_USER_MORE_SALE: '감사합니다. 구매하고 싶은 다른 상품이 있나요? (Y/N)\n',
   ASK_MEMBERSHIP_SALE: '멤버십 할인을 받으시겠습니까? (Y/N)\n',
   ASK_PRODUCT_NAME_AND_QUANTITY:
     '구매하실 상품명과 수량을 입력해 주세요. (예: [사이다-2],[감자칩-1])\n',
