@@ -1,9 +1,7 @@
 import OutputView from '../View/OutputView.js';
 import { ERROR_MESSAGES } from '../config/defaultSettings.js';
 import ShoppingItem from '../Model/ShoppingItem.js';
-
-const ITEM_REGEX = /^\[([^-]+)-(\d+)]$/;
-const isNumber = /^(0|[1-9]\d*)$/;
+import { ITEM_REGEX, isNumber } from '../Utility/regex.js';
 
 function isValidFormat(item) {
   return ITEM_REGEX.test(item);
