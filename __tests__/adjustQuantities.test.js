@@ -33,7 +33,7 @@ describe('adjustQuantities - Product 객체 사용', () => {
 
     expect(inputView.askUserAgree).toHaveBeenCalledWith(
       expect.stringContaining(
-        `현재 ${product.name}은(는) ${7}개는 프로모션 할인이 적용되지 않습니다. 그래도 구매하시겠습니까? (Y/N)`,
+        `현재 ${product.name} ${7}개는 프로모션 할인이 적용되지 않습니다. 그래도 구매하시겠습니까? (Y/N)`,
       ),
     );
 
@@ -63,7 +63,7 @@ describe('adjustQuantities - Product 객체 사용', () => {
 
     expect(inputView.askUserAgree).toHaveBeenCalledWith(
       expect.stringContaining(
-        `현재 ${product.name}은(는) ${4}개는 프로모션 할인이 적용되지 않습니다. 그래도 구매하시겠습니까? (Y/N)`,
+        `현재 ${product.name} ${4}개는 프로모션 할인이 적용되지 않습니다. 그래도 구매하시겠습니까? (Y/N)`,
       ),
     );
 
