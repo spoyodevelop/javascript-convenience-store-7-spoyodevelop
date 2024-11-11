@@ -1,5 +1,4 @@
 import Promotion from '../src/Model/Promotion.js';
-import PROMOTION_LIST from '../src/Model/PromotionList.js';
 
 describe('Promotion canGiveFreeItem Method', () => {
   const testDateWithinPromotion = new Date('2024-06-15'); // 프로모션 기간 내 날짜
