@@ -14,7 +14,8 @@ function parseItem(item) {
 
 function isValidQuantity(quantity) {
   if (!isNumber.test(quantity)) return false;
-  return Number.isInteger(quantity) && quantity > 0;
+  const numberQuantity = Number(quantity);
+  return Number.isInteger(numberQuantity) && numberQuantity > 0;
 }
 
 export default function validateShoppingCart(inputString) {
