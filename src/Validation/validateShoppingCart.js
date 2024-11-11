@@ -1,43 +1,46 @@
-import { Console } from '@woowacourse/mission-utils';
+import OutputView from '../View/OutputView.js';
 import { ERROR_MESSAGES } from '../config/defaultSettings.js';
 import ShoppingItem from '../Model/ShoppingItem.js';
 
-function isValidFormat(item) {
-  return /^\[([^-]+)-(\d+)]$/.test(item);
-}
+const ITEM_REGEX = /^\[([^-]+)-(\d+)]$/;
 const isNumber = /^(0|[1-9]\d*)$/;
 
+function isValidFormat(item) {
+  return ITEM_REGEX.test(item);
+}
+
 function parseItem(item) {
-  const [, name, quantity] = item.match(/^\[([^-]+)-(\d+)]$/);
+  const [, name, quantity] = item.match(ITEM_REGEX);
   return { name, quantity };
 }
 
 function isValidQuantity(quantity) {
-  if (!isNumber.test(quantity)) return false;
-  const numberQuantity = Number(quantity);
-  return Number.isInteger(numberQuantity) && numberQuantity > 0;
+  return isNumber.test(quantity) && Number(quantity) > 0;
 }
 
 export default function validateShoppingCart(inputString) {
   const shoppingItems = [];
   const items = inputString.split(',');
 
-  for (const item of items) {
+  items.forEach((item) => {
     const trimmedItem = item.trim();
 
     if (!isValidFormat(trimmedItem)) {
-      Console.print(ERROR_MESSAGES.INVALID_FORMAT);
+      OutputView.printMessage(`${ERROR_MESSAGES.INVALID_FORMAT}`);
       return null;
     }
 
     const { name, quantity } = parseItem(trimmedItem);
     if (!isValidQuantity(quantity)) {
-      Console.print(ERROR_MESSAGES.INVALID_QUANTITY);
+      OutputView.printMessage(`${ERROR_MESSAGES.INVALID_QUANTITY}`);
       return null;
     }
 
     shoppingItems.push(new ShoppingItem(name, Number(quantity)));
-  }
+  });
 
-  return shoppingItems.length > 0 ? shoppingItems : null;
+  if (shoppingItems.length > 0) {
+    return shoppingItems;
+  }
+  return null;
 }
