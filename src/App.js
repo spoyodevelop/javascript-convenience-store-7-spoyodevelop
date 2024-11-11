@@ -13,6 +13,12 @@ class App {
 
     do {
       await this.handleUserInput(products);
+      if (this.areAllProductsSoldOut(products)) {
+        OutputView.printMessage(
+          '재고가 다 팔렸습니다. 금일 판매를 종료합니다.',
+        );
+        return;
+      }
       continueSale = await InputView.askUserAgree(
         USER_MESSAGES.ASK_USER_MORE_SALE,
       );
@@ -27,6 +33,11 @@ class App {
       totals = {},
     } = (await askUserInput(products)) || {};
     OutputView.displayBill(isMembershipSale, filteredGoods, totals);
+  }
+
+  areAllProductsSoldOut(products) {
+    if (!Array.isArray(products)) return false;
+    return products.every((product) => product.quantity === 0);
   }
 }
 
